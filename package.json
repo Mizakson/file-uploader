@@ -4,7 +4,8 @@
   "description": "Odin Project NodeJS Course Project #5",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devStart": "nodemon script.ts"
   },
   "keywords": [],
   "author": "",
