@@ -14,7 +14,17 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(uuid())
   name     String @unique
   password String
+  posts    Post[]
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  createdAt DateTime
+  updatedAt DateTime
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  content   String
 }
