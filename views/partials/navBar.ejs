@@ -1,0 +1,16 @@
+<div class="nav">
+    <% if (user) { %>
+        <div class="welcome">
+            <p>Welcome back, <%= user.name %>!</p>
+        </div>
+        <div class="links">
+            <a href="/logout">Log out</a>
+        </div>
+
+        <% } else { %>
+            <div class="links">
+                <a href="/sign-up">Sign up</a>
+                <a href="/login">Log in</a>
+            </div>
+            <% } %>
+</div>

@@ -6,10 +6,12 @@ const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 const passport = require("passport")
 const localStrategy = require("passport-local").Strategy
+const bcrypt = require("bcryptjs")
 
 const app = express()
 
 // routers here
+const userRouter = require("./routes/userRouter")
 
 app.set("view engine", "ejs")
 app.use(express.static("public"))
@@ -49,6 +51,8 @@ passport.use(
 
             const match = await bcrypt.compare(password, user.password)
             if (!match) return done(null, false, { message: "Incorrect password..." })
+
+            return done(null, user)
         } catch (err) {
             return done(err)
         }
@@ -81,8 +85,38 @@ app.use((req, res, next) => {
 })
 
 app.get("/", (req, res) => {
-    res.render("index")
+    res.render("index", {
+        user: res.locals.currentUser,
+    })
 })
+
+app.get("/sign-up", (req, res) => {
+    res.render("sign-up", {
+        user: res.locals.currentUser,
+    })
+})
+
+app.get("/login", (req, res) => {
+    res.render("login", {
+        user: res.locals.currentUser,
+    })
+})
+
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/",
+}))
+
+app.get("/logout", (req, res, next) => {
+    req.logout((err) => {
+        if (err) return next(err)
+        res.redirect("/")
+    })
+})
+
+// app.use("/", app)
+app.use("/user", userRouter)
+// app.use("/content", contentRouter)
 
 const PORT = 3000
 app.listen(PORT, "0.0.0.0", () => {
