@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator")
+const { validationResult, body } = require("express-validator")
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
 const bcrypt = require("bcryptjs")
@@ -32,3 +32,9 @@ exports.createNewUser = async (req, res) => {
         })
     }
 }
+
+exports.validateUser = [
+    body("username").isAlpha().notEmpty().withMessage("Please enter a username"),
+    body("password").isLength({ min: 6 }).withMessage("Password must be a minimum of 6 characters"),
+    body("confirmPassword").custom((value, { req }) => value === req.body.password).withMessage("Passwords must match")
+]
