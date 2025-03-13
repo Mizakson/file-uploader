@@ -79,3 +79,12 @@ app.use((req, res, next) => {
     res.locals.currentUser = req.user
     next()
 })
+
+app.get("/", (req, res) => {
+    res.render("index")
+})
+
+const PORT = 3000
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`listening on http://localhost:${PORT}`)
+})
