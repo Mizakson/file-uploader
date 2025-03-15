@@ -114,6 +114,10 @@ app.get("/logout", (req, res, next) => {
     })
 })
 
+app.get("/upload-file", (req, res) => {
+    res.render("file-upload")
+})
+
 // app.use("/", app)
 app.use("/user", userRouter)
 // app.use("/content", contentRouter)
