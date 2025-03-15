@@ -1,12 +1,14 @@
 const { Router } = require("express")
 
-const contentController = require("../controllers/contentController")
+// const contentController = require("../controllers/contentController")
 const contentRouter = Router()
 const multer = require('multer')
 const upload = multer({ dest: 'public/uploads' })
 
 contentRouter.post("/upload-file", upload.single("newFile"), function (req, res, next) {
     const fileInfo = req.file
+    console.log(fileInfo)
+    res.redirect("/")
     // req.file info
     /* 
     fieldname: 'newFile',
