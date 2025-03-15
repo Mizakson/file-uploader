@@ -5,6 +5,6 @@ const contentRouter = Router()
 
 // contentRouter.post("/upload-file", middleware here)
 
-// contentRouter.post("add-folder", middleware here)
+// contentRouter.post("/add-folder", middleware here)
 
 module.exports = contentRouter
