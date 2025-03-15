@@ -17,16 +17,17 @@ model User {
   id       String @id @default(uuid())
   name     String @unique
   password String
-  posts    Post[]
+  files    File[]
 }
 
-model Post {
-  id        String   @id @default(uuid())
-  createdAt DateTime
-  updatedAt DateTime
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  content   String
+model File {
+  id          String   @id @default(uuid())
+  name        String
+  updloadedAt DateTime
+  size        Int
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  content     String
 }
 
 model Session {
