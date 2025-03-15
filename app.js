@@ -12,6 +12,7 @@ const app = express()
 
 // routers here
 const userRouter = require("./routes/userRouter")
+const contentRouter = require("./routes/contentRouter")
 
 app.set("view engine", "ejs")
 app.use(express.static("public"))
@@ -120,7 +121,7 @@ app.get("/upload-file", (req, res) => {
 
 // app.use("/", app)
 app.use("/user", userRouter)
-// app.use("/content", contentRouter)
+app.use("/content", contentRouter)
 
 const PORT = 3000
 app.listen(PORT, "0.0.0.0", () => {
