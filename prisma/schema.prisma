@@ -28,3 +28,10 @@ model Post {
   authorId  String
   content   String
 }
+
+model Session {
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}

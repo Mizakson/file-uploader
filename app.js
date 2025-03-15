@@ -25,7 +25,7 @@ app.use(
         resave: true,
         saveUninitialized: false,
         store: new PrismaSessionStore(
-            new PrismaClient(),
+            prisma,
             {
                 checkPeriod: 2 * 60 * 1000, // ms
                 dbRecordIdIsSessionId: true,
