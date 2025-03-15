@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Upload File</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Upload File</h1>
+        <form action="/file/upload-file" method="post" id="file-upload-form" enctype="multipart/form-data">
+            <fieldset>
+                <label for="newFile">Choose a file to upload: </label>
+                <input type="file" name="newFile" id="newFile" accept=".jpg, .jpeg, .txt, .png">
+            </fieldset>
+            <div class="btns">
+                <button><a href="/">Go Home</a></button>
+                <button>Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
