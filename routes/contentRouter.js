@@ -20,7 +20,7 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
         data: {
             files: {
                 create: {
-                    name: fileInfo.fieldname,
+                    name: fileInfo.originalname,
                     updloadedAt: new Date(),
                     size: Number(fileInfo.size)
                 }
