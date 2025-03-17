@@ -9,7 +9,7 @@
 <body>
     <div class="form-container">
         <h1>Upload File</h1>
-        <form action="/content/folder/:folderId/upload-file" method="post" id="file-upload-form"
+        <form action="/content/folder/<%= folder.id %>/upload-file" method="post" id="file-upload-form"
             enctype="multipart/form-data">
             <fieldset>
                 <label for="newFile">Choose a file to upload: </label>

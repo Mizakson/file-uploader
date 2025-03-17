@@ -10,9 +10,9 @@ const prisma = new PrismaClient()
 
 contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
     const fileInfo = req.file
-    const { folderId } = req.params
+    const folderId = req.params.folderId
 
-
+    console.log(folderId)
     const addFiletoFolder = await prisma.folder.update({
         where: {
             id: folderId
@@ -29,7 +29,6 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     })
 
     // if (addFiletoFolder.files)
-    console.log(addFiletoFolder)
     res.redirect("/")
     // req.file info
     /* 

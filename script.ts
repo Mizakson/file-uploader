@@ -4,7 +4,16 @@ const prisma = new PrismaClient()
 // use `prisma` in your application to read and write data in your DB
 
 async function main() {
+    const files = await prisma.folder.findFirst({
+        where: {
+            name: "aasdasd"
+        },
+        include: {
+            files: true
+        }
+    })
 
+    console.log(files)
 }
 
 main()

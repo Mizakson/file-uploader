@@ -130,8 +130,20 @@ app.get("/add-folder", (req, res) => {
     res.render("add-folder")
 })
 
-app.get("/content/folder/:folderId/upload-file", (req, res) => {
-    res.render("file-upload")
+app.get("/content/folder/:folderId/upload-file", async (req, res) => {
+    const folderId = req.params.folderId
+
+    const folder = await prisma.folder.findFirst({
+        where: {
+            id: folderId
+        }
+    })
+
+    // console.log(folderId, folder)
+
+    res.render("file-upload", {
+        folder: folder
+    })
 })
 
 // app.use("/", app)
