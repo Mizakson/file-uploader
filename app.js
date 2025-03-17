@@ -94,7 +94,7 @@ app.get("/", async (req, res) => {
 
     })
 
-    console.log(folders.folders)
+    // console.log(folders.folders)
 
     res.render("index", {
         user: res.locals.currentUser,
