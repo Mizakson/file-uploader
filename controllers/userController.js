@@ -21,7 +21,6 @@ exports.createNewUser = async (req, res) => {
                 password: hashedPw
             }
         })
-        console.log("USER ADDED...", newUser)
         res.redirect("/")
 
     } catch (error) {

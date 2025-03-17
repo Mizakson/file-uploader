@@ -4,6 +4,8 @@ const { Router } = require("express")
 const contentRouter = Router()
 const multer = require('multer')
 const upload = multer({ dest: 'public/uploads' })
+const { PrismaClient } = require("@prisma/client")
+const prisma = new PrismaClient()
 
 contentRouter.post("/upload-file", upload.single("newFile"), function (req, res, next) {
     const fileInfo = req.file
@@ -22,6 +24,16 @@ contentRouter.post("/upload-file", upload.single("newFile"), function (req, res,
     */
 })
 
-// contentRouter.post("/add-folder", middleware here)
+contentRouter.post("/add-folder", async function (req, res, next) {
+    const { newFolder } = req.body
+    const { id } = req.user
+    const addFolder = await prisma.folder.create({
+        data: {
+            name: newFolder,
+            userId: id,
+        }
+    })
+    res.redirect("/")
+})
 
 module.exports = contentRouter
