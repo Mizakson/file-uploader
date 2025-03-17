@@ -130,7 +130,7 @@ app.get("/add-folder", (req, res) => {
     res.render("add-folder")
 })
 
-app.get("/upload-file", (req, res) => {
+app.get("/content/folder/:folderId/upload-file", (req, res) => {
     res.render("file-upload")
 })
 

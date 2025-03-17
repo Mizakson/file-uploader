@@ -33,7 +33,7 @@ model File {
   name        String
   updloadedAt DateTime
   size        Int
-  Folder      Folder   @relation(fields: [folderId], references: [id])
+  folder      Folder   @relation(fields: [folderId], references: [id])
   folderId    String
 }
 

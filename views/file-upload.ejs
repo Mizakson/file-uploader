@@ -9,7 +9,8 @@
 <body>
     <div class="form-container">
         <h1>Upload File</h1>
-        <form action="/content/upload-file" method="post" id="file-upload-form" enctype="multipart/form-data">
+        <form action="/content/folder/:folderId/upload-file" method="post" id="file-upload-form"
+            enctype="multipart/form-data">
             <fieldset>
                 <label for="newFile">Choose a file to upload: </label>
                 <input type="file" name="newFile" id="newFile" accept=".jpg, .jpeg, .txt, .png">

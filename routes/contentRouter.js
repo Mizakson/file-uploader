@@ -8,9 +8,28 @@ const { PrismaClient } = require("@prisma/client")
 const { name } = require("ejs")
 const prisma = new PrismaClient()
 
-contentRouter.post("/upload-file", upload.single("newFile"), function (req, res, next) {
+contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
     const fileInfo = req.file
-    console.log(fileInfo)
+    const { folderId } = req.params
+
+
+    const addFiletoFolder = await prisma.folder.update({
+        where: {
+            id: folderId
+        },
+        data: {
+            files: {
+                create: {
+                    name: fileInfo.fieldname,
+                    updloadedAt: new Date(),
+                    size: Number(fileInfo.size)
+                }
+            }
+        }
+    })
+
+    // if (addFiletoFolder.files)
+    console.log(addFiletoFolder)
     res.redirect("/")
     // req.file info
     /* 
@@ -42,5 +61,8 @@ contentRouter.post("/add-folder", async function (req, res, next) {
     })
     res.redirect("/")
 })
+
+// contentRouter.get("/folder/:folderId", middleware here)
+// contentRouter.get("/folder/:folderId/file/:fileId/details", middleware here)
 
 module.exports = contentRouter
