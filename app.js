@@ -115,7 +115,13 @@ app.get("/logout", (req, res, next) => {
     })
 })
 
+app.get("/add-folder", (req, res) => {
+    console.log(req.user)
+    res.render("add-folder")
+})
+
 app.get("/upload-file", (req, res) => {
+    console.log(req.user)
     res.render("file-upload")
 })
 
