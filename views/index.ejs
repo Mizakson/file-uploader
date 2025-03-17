@@ -19,6 +19,25 @@
             </div>
         </div>
         <%- include('partials/navBar.ejs', { user: user }) %>
+            <% if (user) { %>
+                <% for (const obj of folders) { %>
+                    <div class="folder">
+                        <div class="title-text">
+                            <%= obj.name %>
+                        </div>
+                    </div>
+                    <div class="folder-options">
+                        <button><a href="/upload-file">Upload File</a></button>
+                        <button>View Files</button>
+                        <button>Edit</button>
+                        <button>Delete</button>
+                    </div>
+                    <% } %>
+
+                        <% } else { %>
+                            <strong>Create an account to upload files!</strong>
+                            <% } %>
+
     </div>
 </body>
 

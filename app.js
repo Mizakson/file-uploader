@@ -83,9 +83,22 @@ app.use((req, res, next) => {
     next()
 })
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+    const folders = await prisma.user.findUnique({
+        where: {
+            id: res.locals.currentUser.id
+        },
+        include: {
+            folders: true,
+        }
+
+    })
+
+    console.log(folders.folders)
+
     res.render("index", {
         user: res.locals.currentUser,
+        folders: folders.folders
     })
 })
 
