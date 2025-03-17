@@ -17,14 +17,14 @@ model User {
   id       String   @id @default(uuid())
   name     String   @unique
   password String
-  Folder   Folder[]
+  folders  Folder[]
 }
 
 model Folder {
   id     String @id @default(uuid())
   name   String
   files  File[]
-  author User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   userId String
 }
 
