@@ -14,10 +14,18 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String @unique
+  id       String   @id @default(uuid())
+  name     String   @unique
   password String
-  files    File[]
+  Folder   Folder[]
+}
+
+model Folder {
+  id     String @id @default(uuid())
+  name   String
+  files  File[]
+  author User   @relation(fields: [userId], references: [id])
+  userId String
 }
 
 model File {
@@ -25,9 +33,8 @@ model File {
   name        String
   updloadedAt DateTime
   size        Int
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  content     String
+  Folder      Folder   @relation(fields: [folderId], references: [id])
+  folderId    String
 }
 
 model Session {
