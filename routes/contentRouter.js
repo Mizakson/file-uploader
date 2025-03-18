@@ -104,6 +104,18 @@ contentRouter.post("/:folderId/edit-folder", async (req, res) => {
     res.redirect("/")
 })
 
+contentRouter.post("/:folderId/delete-folder", async (req, res) => {
+    const folderId = req.params.folderId
+
+    const deleteFolder = await prisma.folder.delete({
+        where: {
+            id: folderId
+        }
+    })
+
+    res.redirect("/")
+})
+
 // contentRouter.get("/folder/:folderId", middleware here)
 // contentRouter.get("/folder/:folderId/file/:fileId/details", middleware here)
 

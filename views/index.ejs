@@ -30,7 +30,10 @@
                         <button><a href="/content/folder/<%= obj.id %>/upload-file">Upload File</a></button>
                         <button>View Files</button>
                         <button><a href="/content/<%= obj.id %>/edit-folder">Edit</a></button>
-                        <button>Delete</button>
+                        <form action="/content/<%= obj.id%>/delete-folder" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
+
                     </div>
                     <% } %>
 
