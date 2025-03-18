@@ -7,6 +7,8 @@ const prisma = new PrismaClient()
 const passport = require("passport")
 const localStrategy = require("passport-local").Strategy
 const bcrypt = require("bcryptjs")
+const path = require("node:path")
+const fs = require("node:fs")
 
 const app = express()
 
@@ -144,6 +146,22 @@ app.get("/content/folder/:folderId/upload-file", async (req, res) => {
     res.render("file-upload", {
         folder: folder
     })
+})
+
+app.get("/download/:fileId", async (req, res) => {
+    const fileId = req.params.fileId
+
+    const file = await prisma.file.findFirst({
+        where: {
+            id: fileId
+        }
+    })
+
+    const filePath = path.resolve(__dirname, 'public/uploads', file.name)
+    // console.log(filePath)
+    // fs.readFile()
+    res.download(filePath)
+    return
 })
 
 // app.use("/", app)

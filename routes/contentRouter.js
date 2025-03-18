@@ -1,6 +1,6 @@
 const { Router } = require("express")
 const path = require("path")
-
+const fs = require("node:fs")
 // const contentController = require("../controllers/contentController")
 const contentRouter = Router()
 const multer = require('multer')
@@ -40,8 +40,10 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     })
 
     // if (addFiletoFolder.files)
-    res.sendFile(path.join(__dirname, 'public/uploads', 'index.html'));
+
+    // console.log(path.join(__dirname, 'public/uploads', 'index.html'))
     res.redirect("/")
+    return
     // req.file info
     /* 
     fieldname: 'newFile',
@@ -145,6 +147,8 @@ contentRouter.get("/folder/:folderId/files", async (req, res) => {
         folder: folder,
         files: folder.files
     })
+
+
 })
 
 contentRouter.get("/files/:fileId", async (req, res) => {
