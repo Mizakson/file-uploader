@@ -61,6 +61,49 @@ contentRouter.post("/add-folder", async function (req, res, next) {
     res.redirect("/")
 })
 
+contentRouter.get("/:folderId/edit-folder", async (req, res) => {
+    const folderId = req.params.folderId
+
+    // console.log(folderId)
+
+    const folder = await prisma.folder.findFirst({
+        where: {
+            id: folderId
+        }
+    })
+
+    // console.log(folder)
+
+    res.render("edit-folder", {
+        folder: folder
+    })
+})
+
+contentRouter.post("/:folderId/edit-folder", async (req, res) => {
+    const folderId = req.params.folderId
+    const newName = req.body.editFolder
+
+    // console.log(newName)
+
+    const updateName = await prisma.folder.update({
+        where: {
+            id: folderId
+        },
+        data: {
+            name: newName
+        }
+    })
+
+    // const folder = await prisma.folder.findFirst({
+    //     where: {
+    //         id: folderId
+    //     }
+    // })
+    // console.log(folder)
+
+    res.redirect("/")
+})
+
 // contentRouter.get("/folder/:folderId", middleware here)
 // contentRouter.get("/folder/:folderId/file/:fileId/details", middleware here)
 
