@@ -24,18 +24,6 @@ const supabaseUrl = process.env.PROJECT_URL
 const supabaseKey = process.env.SUPABASE_API_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-const uploadFileToCloud = async (file, path) => {
-    const { data, error } = await supabase.storage.from('files').upload(String(path), file, {
-        upsert: true
-    })
-
-    if (error) {
-        console.error("Cloud upload error", error.message)
-    } else {
-        console.log(data)
-    }
-}
-
 contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
     const fileInfo = req.file
     const folderId = req.params.folderId
@@ -56,11 +44,15 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
         }
     })
 
+    const { data, error } = await supabase.storage.from('files').upload(req.file.originalname, req.file.buffer, {
+        contentType: req.file.mimetype
+    })
+
     const filePath = path.resolve(__dirname, 'public/uploads', fileInfo.originalname)
 
-    console.log(filePath)
-
-    uploadFileToCloud(filePath, req.file)
+    if (error) {
+        console.error('Supabase upload error')
+    } else console.log(data)
 
     // console.log(path.join(__dirname, 'public/uploads', 'index.html'))
     res.redirect("/")

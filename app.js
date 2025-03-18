@@ -178,4 +178,5 @@ app.use("/content", contentRouter)
 const PORT = 3000
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`listening on http://localhost:${PORT}`)
+    console.log(process.env.SUPABASE_API_KEY)
 })
