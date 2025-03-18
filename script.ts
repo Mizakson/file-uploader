@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
     const files = await prisma.folder.findFirst({
         where: {
-            name: "aasdasd"
+            name: "joebangles"
         },
         include: {
             files: true

@@ -6,6 +6,7 @@ const multer = require('multer')
 const upload = multer({ dest: 'public/uploads' })
 const { PrismaClient } = require("@prisma/client")
 const { name } = require("ejs")
+const { json } = require("stream/consumers")
 const prisma = new PrismaClient()
 
 contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
@@ -22,7 +23,7 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
                 create: {
                     name: fileInfo.originalname,
                     updloadedAt: new Date(),
-                    size: Number(fileInfo.size)
+                    size: Number(fileInfo.size),
                 }
             }
         }
@@ -116,7 +117,39 @@ contentRouter.post("/:folderId/delete-folder", async (req, res) => {
     res.redirect("/")
 })
 
-// contentRouter.get("/folder/:folderId", middleware here)
-// contentRouter.get("/folder/:folderId/file/:fileId/details", middleware here)
+contentRouter.get("/folder/:folderId/files", async (req, res) => {
+    const folderId = req.params.folderId
+
+    const folder = await prisma.folder.findFirst({
+        where: {
+            id: folderId
+        },
+        include: {
+            files: true
+        }
+    })
+
+    // console.log(folder)
+
+    res.render("view-files", {
+        folder: folder,
+        files: folder.files
+    })
+})
+
+contentRouter.get("/files/:fileId", async (req, res) => {
+    const fileId = req.params.fileId
+
+    const file = await prisma.file.findFirst({
+        where: {
+            id: fileId
+        }
+    })
+
+    res.render("file-details", {
+        file: file,
+        date: JSON.stringify(file.updloadedAt)
+    })
+})
 
 module.exports = contentRouter
