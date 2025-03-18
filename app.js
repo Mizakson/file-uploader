@@ -108,7 +108,7 @@ app.get("/", async (req, res) => {
         folders: folders.folders
     })
 
-    console.log(supabase)
+    // console.log(supabase)
 })
 
 app.get("/sign-up", (req, res) => {
