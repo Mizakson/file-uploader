@@ -20,26 +20,30 @@
         </div>
         <%- include('partials/navBar.ejs', { user: user }) %>
             <% if (user) { %>
-                <% for (const obj of folders) { %>
-                    <div class="folder">
-                        <div class="title-text">
-                            <%= obj.name %>
-                        </div>
-                    </div>
-                    <div class="folder-options">
-                        <button><a href="/content/folder/<%= obj.id %>/upload-file">Upload File</a></button>
-                        <button><a href="/content/folder/<%= obj.id %>/files">View Files</a></button>
-                        <button><a href="/content/<%= obj.id %>/edit-folder">Edit</a></button>
-                        <form action="/content/<%= obj.id%>/delete-folder" method="post">
-                            <button type="submit">Delete</button>
-                        </form>
+                <% if (folders.length===0) { %>
+                    <strong>Create a folder to store and upload files!</strong>
+                    <%} else if (folders.length> 0) { %>
+                        <% for (const obj of folders) { %>
+                            <div class="folder">
+                                <div class="title-text">
+                                    <%= obj.name %>
+                                </div>
+                            </div>
+                            <div class="folder-options">
+                                <button><a href="/content/folder/<%= obj.id %>/upload-file">Upload File</a></button>
+                                <button><a href="/content/folder/<%= obj.id %>/files">View Files</a></button>
+                                <button><a href="/content/<%= obj.id %>/edit-folder">Edit</a></button>
+                                <form action="/content/<%= obj.id%>/delete-folder" method="post">
+                                    <button type="submit">Delete</button>
+                                </form>
 
-                    </div>
-                    <% } %>
-
-                        <% } else { %>
-                            <strong>Create an account to upload files!</strong>
+                            </div>
                             <% } %>
+                                <%} %>
+
+
+
+                                    <% } %>
 
     </div>
 </body>
