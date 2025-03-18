@@ -10,6 +10,11 @@ const bcrypt = require("bcryptjs")
 const path = require("node:path")
 const fs = require("node:fs")
 
+const { createClient } = require('@supabase/supabase-js')
+const supabaseUrl = process.env.PROJECT_URL
+const supabaseKey = process.env.SUPABASE_API_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 const app = express()
 
 // routers here
@@ -102,6 +107,8 @@ app.get("/", async (req, res) => {
         user: res.locals.currentUser,
         folders: folders.folders
     })
+
+    console.log(supabase)
 })
 
 app.get("/sign-up", (req, res) => {

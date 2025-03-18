@@ -3,25 +3,22 @@ const path = require("path")
 const fs = require("node:fs")
 // const contentController = require("../controllers/contentController")
 const contentRouter = Router()
-const multer = require('multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads')
-    },
-    filename: function (req, file, cb) {
-        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname)
-    }
-})
-const upload = multer({ storage: storage })
+
 const { PrismaClient } = require("@prisma/client")
 const { name } = require("ejs")
 const { json } = require("stream/consumers")
 const prisma = new PrismaClient()
 
+const { createClient } = require('@supabase/supabase-js')
+const supabaseUrl = process.env.PROJECT_URL
+const supabaseKey = process.env.SUPABASE_API_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
     const fileInfo = req.file
     const folderId = req.params.folderId
+
+
 
     // console.log(folderId)
     const addFiletoFolder = await prisma.folder.update({
