@@ -1,9 +1,19 @@
 const { Router } = require("express")
+const path = require("path")
 
 // const contentController = require("../controllers/contentController")
 const contentRouter = Router()
 const multer = require('multer')
-const upload = multer({ dest: 'public/uploads' })
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.originalname)
+    }
+})
+const upload = multer({ storage: storage })
 const { PrismaClient } = require("@prisma/client")
 const { name } = require("ejs")
 const { json } = require("stream/consumers")
@@ -30,6 +40,7 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     })
 
     // if (addFiletoFolder.files)
+    res.sendFile(path.join(__dirname, 'public/uploads', 'index.html'));
     res.redirect("/")
     // req.file info
     /* 
@@ -113,7 +124,6 @@ contentRouter.post("/:folderId/delete-folder", async (req, res) => {
             id: folderId
         }
     })
-
     res.redirect("/")
 })
 
@@ -145,6 +155,7 @@ contentRouter.get("/files/:fileId", async (req, res) => {
             id: fileId
         }
     })
+    console.log(req.file)
 
     res.render("file-details", {
         file: file,
@@ -194,7 +205,6 @@ contentRouter.post("/files/:fileId/delete-file", async (req, res) => {
             id: fileId
         }
     })
-
     res.redirect("/")
 })
 

@@ -20,7 +20,8 @@
                         <%= obj.name %>
                     </div>
                     <div class="options">
-                        <button><a href="download-link-here">Download</a></button>
+                        <button><a href="/public/uploads/<%= obj.name %>"
+                                download="<%= obj.name %>">Download</a></button>
                         <button><a href="/content/files/<%= obj.id %>">Details</a></button>
                         <form action="/content/files/<%= obj.id %>/delete-file" method="post">
                             <button type="submit">Delete</button>
