@@ -152,4 +152,50 @@ contentRouter.get("/files/:fileId", async (req, res) => {
     })
 })
 
+// contentRouter.get("/files/:fileId/edit-file", async (req, res) => {
+//     const fileId = req.params.fileId
+
+//     // console.log(folderId)
+
+//     const file = await prisma.file.findFirst({
+//         where: {
+//             id: fileId
+//         }
+//     })
+
+//     res.render("edit-file", {
+//         file: file
+//     })
+// })
+
+// contentRouter.post("/files/:fileId/edit-file", async (req, res) => {
+//     const fileId = req.params.fileId
+//     const newName = req.body.editFile
+
+//     // console.log(newName)
+
+//     const updateName = await prisma.file.update({
+//         where: {
+//             id: fileId
+//         },
+//         data: {
+//             name: newName
+//         }
+//     })
+
+//     res.redirect("/")
+// })
+
+contentRouter.post("/files/:fileId/delete-file", async (req, res) => {
+    const fileId = req.params.fileId
+
+    const deleteFile = await prisma.file.delete({
+        where: {
+            id: fileId
+        }
+    })
+
+    res.redirect("/")
+})
+
 module.exports = contentRouter
