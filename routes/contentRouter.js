@@ -39,6 +39,8 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
         }
     })
 
+    console.log(fileInfo)
+
     // if (addFiletoFolder.files)
 
     // console.log(path.join(__dirname, 'public/uploads', 'index.html'))
