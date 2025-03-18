@@ -12,7 +12,7 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     const fileInfo = req.file
     const folderId = req.params.folderId
 
-    console.log(folderId)
+    // console.log(folderId)
     const addFiletoFolder = await prisma.folder.update({
         where: {
             id: folderId
