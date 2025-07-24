@@ -27,7 +27,7 @@ app.use(express.static("public"))
 app.use(
     session({
         cookie: {
-            maxAge: 7 * 24 * 60 * 60 * 1000 // ms
+            maxAge: 730 * 24 * 60 * 60 * 1000 // ms
         },
         secret: "lorem ipsum",
         resave: true,
@@ -91,6 +91,11 @@ app.use((req, res, next) => {
 })
 
 app.get("/", async (req, res) => {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+        return res.redirect("/login");
+    }
+
     const folders = await prisma.user.findUnique({
         where: {
             id: res.locals.currentUser.id
@@ -98,18 +103,13 @@ app.get("/", async (req, res) => {
         include: {
             folders: true,
         }
-
-    })
-
-    // console.log(folders.folders)
+    });
 
     res.render("index", {
         user: res.locals.currentUser,
         folders: folders.folders
-    })
-
-    // console.log(supabase)
-})
+    });
+});
 
 app.get("/sign-up", (req, res) => {
     res.render("sign-up", {
@@ -148,8 +148,6 @@ app.get("/content/folder/:folderId/upload-file", async (req, res) => {
         }
     })
 
-    // console.log(folderId, folder)
-
     res.render("file-upload", {
         folder: folder
     })
@@ -165,18 +163,14 @@ app.get("/download/:fileId", async (req, res) => {
     })
 
     const filePath = path.resolve(__dirname, 'public/uploads', file.name)
-    // console.log(filePath)
-    // fs.readFile()
     res.download(filePath)
     return
 })
 
-// app.use("/", app)
 app.use("/user", userRouter)
 app.use("/content", contentRouter)
 
 const PORT = 3000
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`listening on http://localhost:${PORT}`)
-    console.log(process.env.SUPABASE_API_KEY)
 })
