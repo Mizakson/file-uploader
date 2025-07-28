@@ -4,9 +4,11 @@
   "description": "Odin Project NodeJS Course Project #5",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --detectOpenHandles --watchAll --no-cache",
     "devStart": "nodemon script.ts",
-    "start": "node --watch app.js"
+    "start": "node --watch app.js",
+    "contentTest": "jest --detectOpenHandles --watch tests/content.test.js",
+    "userTest": "jest --detectOpenHandles --watch tests/user.test.js"
   },
   "keywords": [],
   "author": "",
