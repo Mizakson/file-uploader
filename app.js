@@ -2,13 +2,13 @@ require("dotenv").config()
 const express = require("express")
 const session = require("express-session")
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store")
+const passport = require("passport")
 const { PrismaClient } = require("@prisma/client")
 const prisma = new PrismaClient()
-const passport = require("passport")
-const localStrategy = require("passport-local").Strategy
-const bcrypt = require("bcryptjs")
 const path = require("node:path")
 const fs = require("node:fs")
+
+const configurePassport = require("./config/passport")
 
 const { createClient } = require('@supabase/supabase-js')
 const supabaseUrl = process.env.PROJECT_URL
@@ -42,47 +42,14 @@ app.use(
         )
     })
 )
+
+app.use(passport.initialize())
 app.use(passport.session())
+
+configurePassport()
+
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-
-passport.use(
-    new localStrategy(async (username, password, done) => {
-        try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    name: username
-                }
-            })
-
-            if (!user) return done(null, false, { message: "Incorrect username..." })
-
-            const match = await bcrypt.compare(password, user.password)
-            if (!match) return done(null, false, { message: "Incorrect password..." })
-
-            return done(null, user)
-        } catch (err) {
-            return done(err)
-        }
-    })
-)
-
-passport.serializeUser((user, done) => {
-    done(null, user.id)
-})
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: {
-                id: id
-            }
-        })
-        done(null, user)
-    } catch (err) {
-        done(err)
-    }
-})
 
 
 app.use((req, res, next) => {
