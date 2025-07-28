@@ -57,16 +57,20 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     // console.log(path.join(__dirname, 'public/uploads', 'index.html'))
     res.redirect("/")
     return
-    // req.file info
+
+    // req.file info object
     /* 
-    fieldname: 'newFile',
-    originalname: 'upload-me.txt',
-    encoding: '7bit',
-    mimetype: 'text/plain',
-    destination: 'public/uploads',
-    filename: 'b0a45b7591d386cdc3691ef6c442798e',
-    path: 'public/uploads/b0a45b7591d386cdc3691ef6c442798e',
-    size: 12
+    {
+        fieldname: ,
+        originalname: ,
+        encoding: ,
+        mimetype: ,
+        destination: ,
+        filename: ,
+        path: ,
+        size: ,
+    }
+    
     */
 })
 
