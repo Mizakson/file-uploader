@@ -93,7 +93,7 @@ app.use((req, res, next) => {
 app.get("/", async (req, res) => {
     // Check if the user is authenticated
     if (!req.isAuthenticated()) {
-        return res.redirect("/login");
+        return res.redirect("/sign-up");
     }
 
     const folders = await prisma.user.findUnique({
