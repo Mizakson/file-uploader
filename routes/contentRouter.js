@@ -24,13 +24,12 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
         return res.status(400).send("No file data received.")
     }
 
-
     let fileBuffer
     if (fileInfo.buffer) {
-        fileBuffer = fileInfo.buffer;
+        fileBuffer = fileInfo.buffer
     } else if (fileInfo.path) {
         try {
-            fileBuffer = fs.readFileSync(fileInfo.path);
+            fileBuffer = fs.readFileSync(fileInfo.path)
         } catch (readError) {
             console.error('Error reading file from temporary path (disk storage):', readError)
             return res.status(500).send("Failed to read the uploaded file from disk.")
@@ -38,6 +37,54 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
     } else {
         console.error('Multer did not provide a file buffer or path.')
         return res.status(500).send("Internal server error: File data not accessible.")
+    }
+
+    let supabaseUploadError = null
+    let supabaseData = null
+    let filePublicUrl = null
+
+    try {
+        const { data, error } = await supabase.storage
+            .from('files')
+            .upload(fileInfo.originalname, fileBuffer, {
+                contentType: fileInfo.mimetype,
+                upsert: false,
+                duplex: 'half'
+            })
+
+        if (error) {
+            supabaseUploadError = error
+        } else {
+            supabaseData = data
+            console.log('Supabase upload successful:', supabaseData)
+
+
+            if (supabaseData && supabaseData.path) {
+                const { data: publicUrlData } = supabase.storage.from('files').getPublicUrl(supabaseData.path)
+                if (publicUrlData && publicUrlData.publicUrl) {
+                    filePublicUrl = publicUrlData.publicUrl
+                    console.log('Supabase public URL:', filePublicUrl)
+                } else {
+                    console.warn('Could not retrieve public URL data from Supabase.')
+                }
+            } else {
+                console.warn('Supabase data or path not available after upload.')
+            }
+        }
+    } catch (uploadError) {
+        supabaseUploadError = uploadError
+    } finally {
+        if (fileInfo.path) {
+            fs.unlink(fileInfo.path, (err) => {
+                if (err) console.error('Error deleting temporary file:', err)
+                else console.log('Temporary file deleted:', fileInfo.path)
+            });
+        }
+    }
+
+    if (supabaseUploadError) {
+        console.error('Supabase upload error details:', supabaseUploadError)
+        return res.status(500).send("File upload to Supabase failed.")
     }
 
     try {
@@ -51,56 +98,15 @@ contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), as
                         name: fileInfo.originalname,
                         updloadedAt: new Date(),
                         size: Number(fileInfo.size),
-                        // add url here
+                        publicUrl: filePublicUrl
                     }
                 }
             }
-        })
-        console.log('File info added to database for folder:', folderId)
+        });
+        console.log('File info and public URL added to database for folder:', folderId)
     } catch (prismaError) {
         console.error('Prisma error adding file to folder:', prismaError)
-
-        if (fileInfo.path) {
-            fs.unlink(fileInfo.path, (err) => {
-                if (err) console.error('Error deleting temp file after Prisma error:', err)
-                else console.log('Temporary file deleted after Prisma error:', fileInfo.path)
-            })
-        }
         return res.status(500).send("Failed to update folder in database.")
-    }
-
-
-    let supabaseUploadError = null
-    let supabaseData = null
-    try {
-        const { data, error } = await supabase.storage
-            .from('files')
-            .upload(fileInfo.originalname, fileBuffer, {
-                contentType: fileInfo.mimetype,
-                upsert: false,
-                duplex: 'half'
-            });
-
-        if (error) {
-            supabaseUploadError = error;
-        } else {
-            supabaseData = data
-            console.log('Supabase upload successful:', supabaseData)
-        }
-    } catch (uploadError) {
-        supabaseUploadError = uploadError;
-    } finally {
-        if (fileInfo.path) {
-            fs.unlink(fileInfo.path, (err) => {
-                if (err) console.error('Error deleting temporary file:', err);
-                else console.log('Temporary file deleted:', fileInfo.path);
-            })
-        }
-    }
-
-    if (supabaseUploadError) {
-        console.error('Supabase upload error details:', supabaseUploadError)
-        return res.status(500).send("File upload to Supabase failed.")
     }
 
     res.redirect("/");

@@ -34,6 +34,7 @@ model File {
   name        String
   updloadedAt DateTime
   size        Int
+  publicUrl   String?
   folder      Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId    String
 }
