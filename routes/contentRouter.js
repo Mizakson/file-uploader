@@ -1,22 +1,11 @@
 const { Router } = require("express")
 const path = require("path")
 const fs = require("node:fs")
-// const contentController = require("../controllers/contentController")
-const contentRouter = Router()
 const multer = require('multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads')
-    },
-    filename: function (req, file, cb) {
-        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname)
-    }
-})
-const upload = multer({ storage: storage })
+
+const contentRouter = Router()
+
 const { PrismaClient } = require("@prisma/client")
-const { name } = require("ejs")
-const { json } = require("stream/consumers")
 const prisma = new PrismaClient()
 
 const { createClient } = require('@supabase/supabase-js')
@@ -24,55 +13,99 @@ const supabaseUrl = process.env.PROJECT_URL
 const supabaseKey = process.env.SUPABASE_API_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+const upload = multer({ storage: multer.memoryStorage() })
+
 contentRouter.post("/folder/:folderId/upload-file", upload.single("newFile"), async function (req, res, next) {
     const fileInfo = req.file
     const folderId = req.params.folderId
 
-    // console.log(folderId)
-    const addFiletoFolder = await prisma.folder.update({
-        where: {
-            id: folderId
-        },
-        data: {
-            files: {
-                create: {
-                    name: fileInfo.originalname,
-                    updloadedAt: new Date(),
-                    size: Number(fileInfo.size),
+    if (!fileInfo) {
+        console.error('No file received from Multer.')
+        return res.status(400).send("No file data received.")
+    }
+
+
+    let fileBuffer
+    if (fileInfo.buffer) {
+        fileBuffer = fileInfo.buffer;
+    } else if (fileInfo.path) {
+        try {
+            fileBuffer = fs.readFileSync(fileInfo.path);
+        } catch (readError) {
+            console.error('Error reading file from temporary path (disk storage):', readError)
+            return res.status(500).send("Failed to read the uploaded file from disk.")
+        }
+    } else {
+        console.error('Multer did not provide a file buffer or path.')
+        return res.status(500).send("Internal server error: File data not accessible.")
+    }
+
+    try {
+        await prisma.folder.update({
+            where: {
+                id: folderId
+            },
+            data: {
+                files: {
+                    create: {
+                        name: fileInfo.originalname,
+                        updloadedAt: new Date(),
+                        size: Number(fileInfo.size),
+                        // add url here
+                    }
                 }
             }
+        })
+        console.log('File info added to database for folder:', folderId)
+    } catch (prismaError) {
+        console.error('Prisma error adding file to folder:', prismaError)
+
+        if (fileInfo.path) {
+            fs.unlink(fileInfo.path, (err) => {
+                if (err) console.error('Error deleting temp file after Prisma error:', err)
+                else console.log('Temporary file deleted after Prisma error:', fileInfo.path)
+            })
         }
-    })
-
-    const { data, error } = await supabase.storage.from('files').upload(req.file.originalname, req.file.buffer, {
-        contentType: req.file.mimetype
-    })
-
-    const filePath = path.resolve(__dirname, 'public/uploads', fileInfo.originalname)
-
-    if (error) {
-        console.error('Supabase upload error')
-    } else console.log(data)
-
-    // console.log(path.join(__dirname, 'public/uploads', 'index.html'))
-    res.redirect("/")
-    return
-
-    // req.file info object
-    /* 
-    {
-        fieldname: ,
-        originalname: ,
-        encoding: ,
-        mimetype: ,
-        destination: ,
-        filename: ,
-        path: ,
-        size: ,
+        return res.status(500).send("Failed to update folder in database.")
     }
-    
-    */
-})
+
+
+    let supabaseUploadError = null
+    let supabaseData = null
+    try {
+        const { data, error } = await supabase.storage
+            .from('files')
+            .upload(fileInfo.originalname, fileBuffer, {
+                contentType: fileInfo.mimetype,
+                upsert: false,
+                duplex: 'half'
+            });
+
+        if (error) {
+            supabaseUploadError = error;
+        } else {
+            supabaseData = data
+            console.log('Supabase upload successful:', supabaseData)
+        }
+    } catch (uploadError) {
+        supabaseUploadError = uploadError;
+    } finally {
+        if (fileInfo.path) {
+            fs.unlink(fileInfo.path, (err) => {
+                if (err) console.error('Error deleting temporary file:', err);
+                else console.log('Temporary file deleted:', fileInfo.path);
+            })
+        }
+    }
+
+    if (supabaseUploadError) {
+        console.error('Supabase upload error details:', supabaseUploadError)
+        return res.status(500).send("File upload to Supabase failed.")
+    }
+
+    res.redirect("/");
+    return;
+});
 
 contentRouter.post("/add-folder", async function (req, res, next) {
     const { newFolder } = req.body
