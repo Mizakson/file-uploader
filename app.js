@@ -49,8 +49,8 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use("/", indexRouter)
 app.use("/user", userRouter)
 app.use("/content", contentRouter)
+app.use("/", indexRouter)
 
 module.exports = app
