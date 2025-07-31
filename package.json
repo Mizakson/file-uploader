@@ -7,7 +7,7 @@
     "test": "jest --detectOpenHandles --watchAll --no-cache",
     "devStart": "nodemon script.ts",
     "start": "node --watch server.js",
-    "appTest": "jest --detectOpenHandles --watch tests/app.test.js",
+    "indexTest": "jest --detectOpenHandles --watch tests/index.test.js",
     "contentTest": "jest --detectOpenHandles --watch tests/content.test.js",
     "userTest": "jest --detectOpenHandles --watch tests/user.test.js"
   },
