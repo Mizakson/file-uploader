@@ -1,6 +1,5 @@
 const { validationResult, body } = require("express-validator")
-const { PrismaClient } = require("@prisma/client")
-const prisma = new PrismaClient()
+const prisma = require("../prisma/prisma")
 const bcrypt = require("bcryptjs")
 
 exports.createNewUser = async (req, res) => {

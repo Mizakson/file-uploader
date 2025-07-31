@@ -1,5 +1,5 @@
 const passport = require('passport')
-const prisma = require('./prisma/prisma')
+const prisma = require('../prisma/prisma')
 const { createClient } = require('@supabase/supabase-js')
 
 const supabaseUrl = process.env.PROJECT_URL
