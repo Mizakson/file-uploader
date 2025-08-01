@@ -5,10 +5,11 @@ const bcrypt = require("bcryptjs")
 exports.createNewUser = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        return res.status(400).json({
+        console.error("Validation failed", errors.array());
+        return res.status(400).render('error-page', {
             message: "Validation failed",
             errors: errors.array()
-        })
+        });
     }
 
     try {
@@ -24,7 +25,7 @@ exports.createNewUser = async (req, res) => {
 
     } catch (error) {
         console.error("User creation error", error)
-        res.status(500).json({
+        res.status(500).render('error-page', {
             message: "An error occured while creating the user",
             error: error.message,
         })

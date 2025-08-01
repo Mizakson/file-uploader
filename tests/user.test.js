@@ -49,6 +49,7 @@ describe('userController', () => {
             status: jest.fn(() => mockResponse),
             json: jest.fn(),
             redirect: jest.fn(),
+            render: jest.fn(), // Mock the render function
         }
         // check if console.error is called
         consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { })
@@ -83,10 +84,10 @@ describe('userController', () => {
             })
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
             expect(mockResponse.status).not.toHaveBeenCalled()
-            expect(mockResponse.json).not.toHaveBeenCalled()
+            expect(mockResponse.render).not.toHaveBeenCalled() // Ensure render is not called on success
         })
 
-        test('should return 400 and a JSON error message if validation fails', async () => {
+        test('should render error-page with 400 status if validation fails', async () => {
             const errors = [{ msg: 'Please enter a username' }]
             mockValidationResult.mockReturnValue({
                 isEmpty: () => false,
@@ -97,7 +98,7 @@ describe('userController', () => {
 
             expect(mockValidationResult).toHaveBeenCalledWith(mockRequest)
             expect(mockResponse.status).toHaveBeenCalledWith(400)
-            expect(mockResponse.json).toHaveBeenCalledWith({
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', {
                 message: 'Validation failed',
                 errors: errors,
             })
@@ -106,7 +107,7 @@ describe('userController', () => {
             expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
 
-        test('should return 500 and a JSON error message if an error occurs during user creation', async () => {
+        test('should render error-page with 500 status if an error occurs during user creation', async () => {
             mockValidationResult.mockReturnValue({
                 isEmpty: () => true,
                 array: () => [],
@@ -119,11 +120,16 @@ describe('userController', () => {
 
             expect(consoleErrorSpy).toHaveBeenCalledWith("User creation error", prismaError)
             expect(mockResponse.status).toHaveBeenCalledWith(500)
-            expect(mockResponse.json).toHaveBeenCalledWith({
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', {
                 message: 'An error occured while creating the user',
                 error: prismaError.message,
             })
             expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
+    })
+
+    // make sure middleware exists
+    describe('validateUser', () => {
+
     })
 })
