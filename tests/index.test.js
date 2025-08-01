@@ -1,5 +1,18 @@
 // create mocks first, then import controller
 const mockCreateSignedUrl = jest.fn()
+const mockPipe = jest.fn()
+const mockSetHeader = jest.fn()
+
+jest.mock('stream', () => ({
+    Readable: {
+        fromWeb: jest.fn(() => ({
+            pipe: mockPipe,
+        })),
+    },
+}))
+
+const fetch = jest.fn()
+global.fetch = fetch
 
 jest.mock('../prisma/prisma', () => ({
     user: {
@@ -43,6 +56,7 @@ describe('indexController', () => {
             redirect: jest.fn(),
             status: jest.fn(() => mockResponse),
             send: jest.fn(),
+            setHeader: mockSetHeader,
             locals: {
                 currentUser: { id: 'test-user-id' }
             }
@@ -154,15 +168,21 @@ describe('indexController', () => {
         })
 
         describe('getDownloadFile', () => {
-            test('should redirect to the signed URL if the file is found', async () => {
+            test('should stream the file and set the correct headers if the file is found', async () => {
                 mockRequest.params.fileId = 'file-456'
                 const mockFile = { name: 'test.pdf' }
                 const mockSignedUrl = 'http://test-url.com/signed'
+                const mockWebReadableStream = { body: {} }
 
                 prisma.file.findUnique.mockResolvedValue(mockFile)
                 mockCreateSignedUrl.mockResolvedValue({
                     data: { signedUrl: mockSignedUrl },
                     error: null,
+                })
+
+                fetch.mockResolvedValue({
+                    ok: true,
+                    body: mockWebReadableStream,
                 })
 
                 await indexController.getDownloadFile(mockRequest, mockResponse)
@@ -172,7 +192,10 @@ describe('indexController', () => {
                     select: { name: true, folderId: true },
                 })
                 expect(mockCreateSignedUrl).toHaveBeenCalledWith('test.pdf', 3600)
-                expect(mockResponse.redirect).toHaveBeenCalledWith(mockSignedUrl)
+                expect(fetch).toHaveBeenCalledWith(mockSignedUrl)
+                expect(mockSetHeader).toHaveBeenCalledWith('Content-Disposition', 'attachment filename="test.pdf"')
+                expect(require('stream').Readable.fromWeb).toHaveBeenCalledWith(mockWebReadableStream)
+                expect(mockPipe).toHaveBeenCalledWith(mockResponse)
             })
 
             test('should return 404 if the file is not found in the database', async () => {
@@ -202,6 +225,31 @@ describe('indexController', () => {
                 expect(mockCreateSignedUrl).toHaveBeenCalledWith('test.pdf', 3600)
                 expect(mockResponse.status).toHaveBeenCalledWith(500)
                 expect(mockResponse.send).toHaveBeenCalledWith('Failed to generate download link.')
+            })
+
+            test('should return 500 if the fetch call fails', async () => {
+                mockRequest.params.fileId = 'file-456'
+                const mockFile = { name: 'test.pdf' }
+                const mockSignedUrl = 'http://test-url.com/signed'
+
+                prisma.file.findUnique.mockResolvedValue(mockFile)
+                mockCreateSignedUrl.mockResolvedValue({
+                    data: { signedUrl: mockSignedUrl },
+                    error: null,
+                })
+
+                fetch.mockResolvedValue({
+                    ok: false,
+                    statusText: 'Not Found',
+                })
+
+                await indexController.getDownloadFile(mockRequest, mockResponse)
+
+                expect(prisma.file.findUnique).toHaveBeenCalled()
+                expect(mockCreateSignedUrl).toHaveBeenCalledWith('test.pdf', 3600)
+                expect(fetch).toHaveBeenCalledWith(mockSignedUrl)
+                expect(mockResponse.status).toHaveBeenCalledWith(500)
+                expect(mockResponse.send).toHaveBeenCalledWith('Failed to fetch file for download.')
             })
         })
     })
