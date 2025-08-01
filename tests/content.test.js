@@ -7,7 +7,7 @@ const mockPrismaFolderFindFirst = jest.fn()
 const mockPrismaFolderDelete = jest.fn()
 const mockPrismaFileFindFirst = jest.fn()
 const mockPrismaFileDelete = jest.fn()
-const mockFsUnlink = jest.fn((path, cb) => cb(null)) // Mock fs.unlink to always succeed
+const mockFsUnlink = jest.fn((path, cb) => cb(null))
 const mockFsReadFileSync = jest.fn()
 
 jest.mock('../prisma/prisma', () => ({
@@ -90,7 +90,6 @@ describe('contentController', () => {
         jest.clearAllMocks()
     })
 
-    // --- Tests for uploadFile ---
     describe('uploadFile', () => {
         test('should upload a file and redirect on success', async () => {
             mockRequest.params.folderId = 'folder-123'
@@ -162,7 +161,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for addFolder ---
     describe('addFolder', () => {
         test('should add a new folder and redirect', async () => {
             mockRequest.body.newFolder = 'New Test Folder'
@@ -182,7 +180,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for getEditFolder ---
     describe('getEditFolder', () => {
         test('should render edit-folder view with folder data', async () => {
             mockRequest.params.folderId = 'folder-456'
@@ -198,7 +195,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for postEditFolder ---
     describe('postEditFolder', () => {
         test('should update folder name and redirect', async () => {
             mockRequest.params.folderId = 'folder-456'
@@ -215,7 +211,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for deleteFolder ---
     describe('deleteFolder', () => {
         test('should delete a folder and redirect', async () => {
             mockRequest.params.folderId = 'folder-456'
@@ -230,7 +225,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for getFiles ---
     describe('getFiles', () => {
         test('should render view-files with folder and file data', async () => {
             mockRequest.params.folderId = 'folder-456'
@@ -254,7 +248,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for getFileDetails ---
     describe('getFileDetails', () => {
         test('should render file-details with file data', async () => {
             mockRequest.params.fileId = 'file-789'
@@ -273,7 +266,6 @@ describe('contentController', () => {
         })
     })
 
-    // --- Tests for deleteFile ---
     describe('deleteFile', () => {
         test('should delete a file and redirect', async () => {
             mockRequest.params.fileId = 'file-789'
