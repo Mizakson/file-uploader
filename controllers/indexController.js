@@ -1,3 +1,7 @@
+const path = require("path")
+const fs = require("node:fs")
+const { Readable } = require('stream')
+
 const passport = require('passport')
 const prisma = require('../prisma/prisma')
 const { createClient } = require('@supabase/supabase-js')
@@ -5,6 +9,7 @@ const { createClient } = require('@supabase/supabase-js')
 const supabaseUrl = process.env.PROJECT_URL
 const supabaseKey = process.env.SUPABASE_API_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
+
 
 exports.getIndex = async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -70,6 +75,7 @@ exports.getUploadFile = async (req, res) => {
 
 exports.getDownloadFile = async (req, res) => {
     const fileId = req.params.fileId
+    const bucketName = 'files'
 
     try {
         const file = await prisma.file.findUnique({
@@ -87,11 +93,9 @@ exports.getDownloadFile = async (req, res) => {
             return res.status(404).send("File not found in our records.")
         }
 
-        const bucketName = 'files'
-
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from(bucketName)
-            .createSignedUrl(file.name, 3600)
+            .createSignedUrl(file.name, 3600) // 3600 sec = 1 hr
 
         if (signedUrlError) {
             console.error('Error generating signed URL:', signedUrlError)
@@ -103,7 +107,21 @@ exports.getDownloadFile = async (req, res) => {
             return res.status(500).send("Failed to retrieve signed download link.")
         }
 
-        res.redirect(signedUrlData.signedUrl)
+        const response = await fetch(signedUrlData.signedUrl)
+
+        if (!response.ok) {
+            console.error('Error fetching file from Supabase:', response.statusText)
+            return res.status(500).send("Failed to fetch file for download.")
+        }
+
+        // Content-Disposition header forces the download in the browser.
+        res.setHeader('Content-Disposition', `attachment filename="${file.name}"`)
+
+        // convert Web ReadableStream to a Node.js Readable stream.
+        const nodeStream = Readable.fromWeb(response.body)
+
+        // pipe the Node.js stream to the response.
+        nodeStream.pipe(res)
 
     } catch (error) {
         console.error("Error in download route:", error)
