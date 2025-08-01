@@ -3,7 +3,6 @@ const mockCreateSignedUrl = jest.fn()
 const mockPipe = jest.fn()
 const mockSetHeader = jest.fn()
 
-// Mock the 'stream' module
 jest.mock('stream', () => ({
     Readable: {
         fromWeb: jest.fn(() => ({
@@ -12,7 +11,6 @@ jest.mock('stream', () => ({
     },
 }))
 
-// We'll mock the global fetch function instead of importing it
 const fetch = jest.fn()
 global.fetch = fetch
 
@@ -53,7 +51,6 @@ describe('indexController', () => {
     const mockNext = jest.fn()
 
     beforeEach(() => {
-        // We'll add mock for res.setHeader here
         mockResponse = {
             render: jest.fn(),
             redirect: jest.fn(),
@@ -120,15 +117,15 @@ describe('indexController', () => {
             })
 
             test('should call next with an error if prisma fails', async () => {
-                mockRequest.isAuthenticated.mockReturnValue(true);
-                const mockError = new Error('Database connection failed');
-                prisma.user.findUnique.mockRejectedValue(mockError);
+                mockRequest.isAuthenticated.mockReturnValue(true)
+                const mockError = new Error('Database connection failed')
+                prisma.user.findUnique.mockRejectedValue(mockError)
 
-                await indexController.getIndex(mockRequest, mockResponse, mockNext);
+                await indexController.getIndex(mockRequest, mockResponse, mockNext)
 
-                expect(mockNext).toHaveBeenCalledWith(mockError);
-                expect(mockResponse.render).not.toHaveBeenCalled();
-            });
+                expect(mockNext).toHaveBeenCalledWith(mockError)
+                expect(mockResponse.render).not.toHaveBeenCalled()
+            })
         })
 
         describe('getSignUp', () => {
@@ -157,12 +154,12 @@ describe('indexController', () => {
             })
 
             test('should call next with an error if logout fails', () => {
-                const mockError = new Error('Logout failed');
-                mockRequest.logout.mockImplementationOnce((cb) => cb(mockError));
-                indexController.getLogout(mockRequest, mockResponse, mockNext);
-                expect(mockNext).toHaveBeenCalledWith(mockError);
-                expect(mockResponse.redirect).not.toHaveBeenCalled();
-            });
+                const mockError = new Error('Logout failed')
+                mockRequest.logout.mockImplementationOnce((cb) => cb(mockError))
+                indexController.getLogout(mockRequest, mockResponse, mockNext)
+                expect(mockNext).toHaveBeenCalledWith(mockError)
+                expect(mockResponse.redirect).not.toHaveBeenCalled()
+            })
         })
 
         describe('getAddFolder', () => {
@@ -200,15 +197,15 @@ describe('indexController', () => {
             })
 
             test('should call next with an error if prisma fails', async () => {
-                mockRequest.params.folderId = 'folder-123';
-                const mockError = new Error('Database error');
-                prisma.folder.findFirst.mockRejectedValue(mockError);
+                mockRequest.params.folderId = 'folder-123'
+                const mockError = new Error('Database error')
+                prisma.folder.findFirst.mockRejectedValue(mockError)
 
-                await indexController.getUploadFile(mockRequest, mockResponse, mockNext);
+                await indexController.getUploadFile(mockRequest, mockResponse, mockNext)
 
-                expect(mockNext).toHaveBeenCalledWith(mockError);
-                expect(mockResponse.render).not.toHaveBeenCalled();
-            });
+                expect(mockNext).toHaveBeenCalledWith(mockError)
+                expect(mockResponse.render).not.toHaveBeenCalled()
+            })
         })
 
         describe('getDownloadFile', () => {
@@ -299,10 +296,10 @@ describe('indexController', () => {
             test('should call next with an error if an unexpected error occurs', async () => {
                 mockRequest.params.fileId = 'file-456'
                 const mockFile = { name: 'test.pdf' }
-                const mockError = new Error('Unexpected database error');
+                const mockError = new Error('Unexpected database error')
 
                 prisma.file.findUnique.mockResolvedValue(mockFile)
-                mockCreateSignedUrl.mockRejectedValue(mockError); // Simulate a rejection to trigger the catch block
+                mockCreateSignedUrl.mockRejectedValue(mockError)
 
                 await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
 
