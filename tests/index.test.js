@@ -3,6 +3,7 @@ const mockCreateSignedUrl = jest.fn()
 const mockPipe = jest.fn()
 const mockSetHeader = jest.fn()
 
+// Mock the 'stream' module
 jest.mock('stream', () => ({
     Readable: {
         fromWeb: jest.fn(() => ({
@@ -11,6 +12,7 @@ jest.mock('stream', () => ({
     },
 }))
 
+// We'll mock the global fetch function instead of importing it
 const fetch = jest.fn()
 global.fetch = fetch
 
@@ -51,6 +53,7 @@ describe('indexController', () => {
     const mockNext = jest.fn()
 
     beforeEach(() => {
+        // We'll add mock for res.setHeader here
         mockResponse = {
             render: jest.fn(),
             redirect: jest.fn(),
@@ -103,7 +106,7 @@ describe('indexController', () => {
                 const mockFolders = [{ id: 'folder1', name: 'Folder 1' }]
                 prisma.user.findUnique.mockResolvedValue({ folders: mockFolders })
 
-                await indexController.getIndex(mockRequest, mockResponse)
+                await indexController.getIndex(mockRequest, mockResponse, mockNext)
 
                 expect(mockRequest.isAuthenticated).toHaveBeenCalled()
                 expect(prisma.user.findUnique).toHaveBeenCalledWith({
@@ -115,6 +118,17 @@ describe('indexController', () => {
                     folders: mockFolders,
                 })
             })
+
+            test('should call next with an error if prisma fails', async () => {
+                mockRequest.isAuthenticated.mockReturnValue(true);
+                const mockError = new Error('Database connection failed');
+                prisma.user.findUnique.mockRejectedValue(mockError);
+
+                await indexController.getIndex(mockRequest, mockResponse, mockNext);
+
+                expect(mockNext).toHaveBeenCalledWith(mockError);
+                expect(mockResponse.render).not.toHaveBeenCalled();
+            });
         })
 
         describe('getSignUp', () => {
@@ -141,6 +155,14 @@ describe('indexController', () => {
                 expect(mockRequest.logout).toHaveBeenCalled()
                 expect(mockResponse.redirect).toHaveBeenCalledWith('/')
             })
+
+            test('should call next with an error if logout fails', () => {
+                const mockError = new Error('Logout failed');
+                mockRequest.logout.mockImplementationOnce((cb) => cb(mockError));
+                indexController.getLogout(mockRequest, mockResponse, mockNext);
+                expect(mockNext).toHaveBeenCalledWith(mockError);
+                expect(mockResponse.redirect).not.toHaveBeenCalled();
+            });
         })
 
         describe('getAddFolder', () => {
@@ -156,7 +178,7 @@ describe('indexController', () => {
                 const mockFolder = { id: 'folder-123', name: 'Test Folder' }
                 prisma.folder.findFirst.mockResolvedValue(mockFolder)
 
-                await indexController.getUploadFile(mockRequest, mockResponse)
+                await indexController.getUploadFile(mockRequest, mockResponse, mockNext)
 
                 expect(prisma.folder.findFirst).toHaveBeenCalledWith({
                     where: { id: 'folder-123' },
@@ -165,6 +187,28 @@ describe('indexController', () => {
                     folder: mockFolder,
                 })
             })
+
+            test('should render error-page with 404 status if folder is not found', async () => {
+                mockRequest.params.folderId = 'non-existent-folder'
+                prisma.folder.findFirst.mockResolvedValue(null)
+
+                await indexController.getUploadFile(mockRequest, mockResponse, mockNext)
+
+                expect(prisma.folder.findFirst).toHaveBeenCalled()
+                expect(mockResponse.status).toHaveBeenCalledWith(404)
+                expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'Folder not found.' })
+            })
+
+            test('should call next with an error if prisma fails', async () => {
+                mockRequest.params.folderId = 'folder-123';
+                const mockError = new Error('Database error');
+                prisma.folder.findFirst.mockRejectedValue(mockError);
+
+                await indexController.getUploadFile(mockRequest, mockResponse, mockNext);
+
+                expect(mockNext).toHaveBeenCalledWith(mockError);
+                expect(mockResponse.render).not.toHaveBeenCalled();
+            });
         })
 
         describe('getDownloadFile', () => {
@@ -185,7 +229,7 @@ describe('indexController', () => {
                     body: mockWebReadableStream,
                 })
 
-                await indexController.getDownloadFile(mockRequest, mockResponse)
+                await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
 
                 expect(prisma.file.findUnique).toHaveBeenCalledWith({
                     where: { id: 'file-456' },
@@ -198,18 +242,18 @@ describe('indexController', () => {
                 expect(mockPipe).toHaveBeenCalledWith(mockResponse)
             })
 
-            test('should return 404 if the file is not found in the database', async () => {
+            test('should render error-page with 404 status if the file is not found in the database', async () => {
                 mockRequest.params.fileId = 'non-existent-file'
                 prisma.file.findUnique.mockResolvedValue(null)
 
-                await indexController.getDownloadFile(mockRequest, mockResponse)
+                await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
 
                 expect(prisma.file.findUnique).toHaveBeenCalled()
                 expect(mockResponse.status).toHaveBeenCalledWith(404)
-                expect(mockResponse.send).toHaveBeenCalledWith('File not found in our records.')
+                expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: "File not found in our records." })
             })
 
-            test('should return 500 if an error occurs while generating the signed URL', async () => {
+            test('should render error-page with 500 status if an error occurs while generating the signed URL', async () => {
                 mockRequest.params.fileId = 'file-456'
                 const mockFile = { name: 'test.pdf' }
 
@@ -219,15 +263,15 @@ describe('indexController', () => {
                     error: { message: 'Supabase error' },
                 })
 
-                await indexController.getDownloadFile(mockRequest, mockResponse)
+                await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
 
                 expect(prisma.file.findUnique).toHaveBeenCalled()
                 expect(mockCreateSignedUrl).toHaveBeenCalledWith('test.pdf', 3600)
                 expect(mockResponse.status).toHaveBeenCalledWith(500)
-                expect(mockResponse.send).toHaveBeenCalledWith('Failed to generate download link.')
+                expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: "Failed to generate download link." })
             })
 
-            test('should return 500 if the fetch call fails', async () => {
+            test('should render error-page with 500 status if the fetch call fails', async () => {
                 mockRequest.params.fileId = 'file-456'
                 const mockFile = { name: 'test.pdf' }
                 const mockSignedUrl = 'http://test-url.com/signed'
@@ -243,13 +287,27 @@ describe('indexController', () => {
                     statusText: 'Not Found',
                 })
 
-                await indexController.getDownloadFile(mockRequest, mockResponse)
+                await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
 
                 expect(prisma.file.findUnique).toHaveBeenCalled()
                 expect(mockCreateSignedUrl).toHaveBeenCalledWith('test.pdf', 3600)
                 expect(fetch).toHaveBeenCalledWith(mockSignedUrl)
                 expect(mockResponse.status).toHaveBeenCalledWith(500)
-                expect(mockResponse.send).toHaveBeenCalledWith('Failed to fetch file for download.')
+                expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: "Failed to fetch file for download." })
+            })
+
+            test('should call next with an error if an unexpected error occurs', async () => {
+                mockRequest.params.fileId = 'file-456'
+                const mockFile = { name: 'test.pdf' }
+                const mockError = new Error('Unexpected database error');
+
+                prisma.file.findUnique.mockResolvedValue(mockFile)
+                mockCreateSignedUrl.mockRejectedValue(mockError); // Simulate a rejection to trigger the catch block
+
+                await indexController.getDownloadFile(mockRequest, mockResponse, mockNext)
+
+                expect(mockNext).toHaveBeenCalledWith(mockError)
+                expect(mockResponse.render).not.toHaveBeenCalled()
             })
         })
     })

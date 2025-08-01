@@ -11,24 +11,33 @@ const supabaseKey = process.env.SUPABASE_API_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 
-exports.getIndex = async (req, res) => {
+exports.getIndex = async (req, res, next) => {
     if (!req.isAuthenticated()) {
         return res.redirect("/login")
     }
 
-    const folders = await prisma.user.findUnique({
-        where: {
-            id: res.locals.currentUser.id
-        },
-        include: {
-            folders: true,
-        }
-    })
+    try {
+        const folders = await prisma.user.findUnique({
+            where: {
+                id: res.locals.currentUser.id
+            },
+            include: {
+                folders: true,
+            }
+        })
 
-    res.render("index", {
-        user: res.locals.currentUser,
-        folders: folders.folders
-    })
+        if (!folders) {
+            return res.status(404).render('error-page', { message: "User not found." });
+        }
+
+        res.render("index", {
+            user: res.locals.currentUser,
+            folders: folders.folders
+        })
+    } catch (error) {
+        console.error("Error in getIndex:", error);
+        next(error);
+    }
 }
 
 exports.getSignUp = (req, res) => {
@@ -55,25 +64,35 @@ exports.getLogout = (req, res, next) => {
     })
 }
 
+
 exports.getAddFolder = (req, res) => {
     res.render("add-folder")
 }
 
-exports.getUploadFile = async (req, res) => {
+exports.getUploadFile = async (req, res, next) => {
     const folderId = req.params.folderId
 
-    const folder = await prisma.folder.findFirst({
-        where: {
-            id: folderId
-        }
-    })
+    try {
+        const folder = await prisma.folder.findFirst({
+            where: {
+                id: folderId
+            }
+        })
 
-    res.render("file-upload", {
-        folder: folder
-    })
+        if (!folder) {
+            return res.status(404).render('error-page', { message: "Folder not found." });
+        }
+
+        res.render("file-upload", {
+            folder: folder
+        })
+    } catch (error) {
+        console.error("Error in getUploadFile:", error);
+        next(error);
+    }
 }
 
-exports.getDownloadFile = async (req, res) => {
+exports.getDownloadFile = async (req, res, next) => {
     const fileId = req.params.fileId
     const bucketName = 'files'
 
@@ -89,8 +108,7 @@ exports.getDownloadFile = async (req, res) => {
         })
 
         if (!file) {
-            console.log(`File with ID ${fileId} not found in database.`)
-            return res.status(404).send("File not found in our records.")
+            return res.status(404).render('error-page', { message: "File not found in our records." })
         }
 
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
@@ -99,19 +117,19 @@ exports.getDownloadFile = async (req, res) => {
 
         if (signedUrlError) {
             console.error('Error generating signed URL:', signedUrlError)
-            return res.status(500).send("Failed to generate download link.")
+            return res.status(500).render('error-page', { message: "Failed to generate download link." })
         }
 
         if (!signedUrlData || !signedUrlData.signedUrl) {
             console.error('Signed URL data or signedUrl property is missing.')
-            return res.status(500).send("Failed to retrieve signed download link.")
+            return res.status(500).render('error-page', { message: "Failed to retrieve signed download link." })
         }
 
         const response = await fetch(signedUrlData.signedUrl)
 
         if (!response.ok) {
             console.error('Error fetching file from Supabase:', response.statusText)
-            return res.status(500).send("Failed to fetch file for download.")
+            return res.status(500).render('error-page', { message: "Failed to fetch file for download." })
         }
 
         // Content-Disposition header forces the download in the browser.
@@ -125,6 +143,6 @@ exports.getDownloadFile = async (req, res) => {
 
     } catch (error) {
         console.error("Error in download route:", error)
-        res.status(500).send("An internal error occurred during file download.")
+        next(error)
     }
 }

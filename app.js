@@ -53,4 +53,14 @@ app.use("/user", userRouter)
 app.use("/content", contentRouter)
 app.use("/", indexRouter)
 
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    const statusCode = err.status || 500
+    const message = err.message || 'An unexpected error occurred.'
+
+    res.status(statusCode).render('errorpage', {
+        message: message,
+    })
+})
+
 module.exports = app
