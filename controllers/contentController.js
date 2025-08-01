@@ -1,5 +1,3 @@
-// contentController.js
-
 const path = require("path")
 const fs = require("node:fs")
 const multer = require('multer')
