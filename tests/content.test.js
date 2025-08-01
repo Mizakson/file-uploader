@@ -116,26 +116,26 @@ describe('contentController', () => {
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
         })
 
-        test('should return 400 if no file is received', async () => {
+        test('should render error-page with 400 status if no file is received', async () => {
             mockRequest.file = undefined
 
             await contentController.uploadFile(mockRequest, mockResponse, mockNext)
 
             expect(mockResponse.status).toHaveBeenCalledWith(400)
-            expect(mockResponse.send).toHaveBeenCalledWith('No file data received.')
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'No file data received.' })
         })
 
-        test('should return 500 if Supabase upload fails', async () => {
+        test('should render error-page with 500 status if Supabase upload fails', async () => {
             mockRequest.params.folderId = 'folder-123'
             mockSupabaseUpload.mockResolvedValue({ data: null, error: { message: 'Supabase error' } })
 
             await contentController.uploadFile(mockRequest, mockResponse, mockNext)
 
             expect(mockResponse.status).toHaveBeenCalledWith(500)
-            expect(mockResponse.send).toHaveBeenCalledWith('File upload to Supabase failed.')
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'File upload to Supabase failed.' })
         })
 
-        test('should return 500 if Prisma update fails after successful upload', async () => {
+        test('should call next with an error if Prisma update fails after successful upload', async () => {
             mockRequest.params.folderId = 'folder-123'
             mockSupabaseUpload.mockResolvedValue({ data: { path: 'test.txt' }, error: null })
             mockSupabaseGetPublicUrl.mockReturnValue({ data: { publicUrl: 'http://test-url.com/test.txt' } })
@@ -143,11 +143,11 @@ describe('contentController', () => {
 
             await contentController.uploadFile(mockRequest, mockResponse, mockNext)
 
-            expect(mockResponse.status).toHaveBeenCalledWith(500)
-            expect(mockResponse.send).toHaveBeenCalledWith('Failed to update folder in database.')
+            expect(mockNext).toHaveBeenCalledWith(expect.any(Error))
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
 
-        test('should return 500 if file data is not accessible', async () => {
+        test('should render error-page with 500 status if file data is not accessible', async () => {
             mockRequest.file = {
                 originalname: 'test.txt',
                 mimetype: 'text/plain',
@@ -157,12 +157,23 @@ describe('contentController', () => {
             await contentController.uploadFile(mockRequest, mockResponse, mockNext)
 
             expect(mockResponse.status).toHaveBeenCalledWith(500)
-            expect(mockResponse.send).toHaveBeenCalledWith("Internal server error: File data not accessible.")
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: "Internal server error: File data not accessible." })
+        })
+
+        test('should call next with an error if an unexpected error occurs during upload', async () => {
+            mockRequest.params.folderId = 'folder-123'
+            const mockError = new Error('Unexpected upload error');
+            mockSupabaseUpload.mockRejectedValue(mockError);
+
+            await contentController.uploadFile(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
     })
 
     describe('addFolder', () => {
-        test('should add a new folder and redirect', async () => {
+        test('should add a new folder and redirect on success', async () => {
             mockRequest.body.newFolder = 'New Test Folder'
             mockPrismaUserUpdate.mockResolvedValue({})
 
@@ -178,6 +189,17 @@ describe('contentController', () => {
             })
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
         })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.body.newFolder = 'New Test Folder'
+            const mockError = new Error('Prisma update failed')
+            mockPrismaUserUpdate.mockRejectedValue(mockError)
+
+            await contentController.addFolder(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
+        })
     })
 
     describe('getEditFolder', () => {
@@ -186,22 +208,44 @@ describe('contentController', () => {
             const mockFolder = { id: 'folder-456', name: 'Folder to Edit' }
             mockPrismaFolderFindFirst.mockResolvedValue(mockFolder)
 
-            await contentController.getEditFolder(mockRequest, mockResponse)
+            await contentController.getEditFolder(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFolderFindFirst).toHaveBeenCalledWith({
                 where: { id: 'folder-456' }
             })
             expect(mockResponse.render).toHaveBeenCalledWith('edit-folder', { folder: mockFolder })
         })
+
+        test('should render error-page with 404 status if folder is not found', async () => {
+            mockRequest.params.folderId = 'non-existent-folder'
+            mockPrismaFolderFindFirst.mockResolvedValue(null)
+
+            await contentController.getEditFolder(mockRequest, mockResponse, mockNext)
+
+            expect(mockPrismaFolderFindFirst).toHaveBeenCalled()
+            expect(mockResponse.status).toHaveBeenCalledWith(404)
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'Folder not found.' })
+        })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.folderId = 'folder-456'
+            const mockError = new Error('Prisma find failed')
+            mockPrismaFolderFindFirst.mockRejectedValue(mockError)
+
+            await contentController.getEditFolder(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.render).not.toHaveBeenCalled()
+        })
     })
 
     describe('postEditFolder', () => {
-        test('should update folder name and redirect', async () => {
+        test('should update folder name and redirect on success', async () => {
             mockRequest.params.folderId = 'folder-456'
             mockRequest.body.editFolder = 'Updated Folder Name'
             mockPrismaFolderUpdate.mockResolvedValue({})
 
-            await contentController.postEditFolder(mockRequest, mockResponse)
+            await contentController.postEditFolder(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFolderUpdate).toHaveBeenCalledWith({
                 where: { id: 'folder-456' },
@@ -209,19 +253,41 @@ describe('contentController', () => {
             })
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
         })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.folderId = 'folder-456'
+            const mockError = new Error('Prisma update failed')
+            mockPrismaFolderUpdate.mockRejectedValue(mockError)
+
+            await contentController.postEditFolder(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
+        })
     })
 
     describe('deleteFolder', () => {
-        test('should delete a folder and redirect', async () => {
+        test('should delete a folder and redirect on success', async () => {
             mockRequest.params.folderId = 'folder-456'
             mockPrismaFolderDelete.mockResolvedValue({})
 
-            await contentController.deleteFolder(mockRequest, mockResponse)
+            await contentController.deleteFolder(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFolderDelete).toHaveBeenCalledWith({
                 where: { id: 'folder-456' }
             })
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
+        })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.folderId = 'folder-456'
+            const mockError = new Error('Prisma delete failed')
+            mockPrismaFolderDelete.mockRejectedValue(mockError)
+
+            await contentController.deleteFolder(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
     })
 
@@ -235,7 +301,7 @@ describe('contentController', () => {
             }
             mockPrismaFolderFindFirst.mockResolvedValue(mockFolder)
 
-            await contentController.getFiles(mockRequest, mockResponse)
+            await contentController.getFiles(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFolderFindFirst).toHaveBeenCalledWith({
                 where: { id: 'folder-456' },
@@ -246,6 +312,28 @@ describe('contentController', () => {
                 files: mockFolder.files
             })
         })
+
+        test('should render error-page with 404 status if folder is not found', async () => {
+            mockRequest.params.folderId = 'non-existent-folder'
+            mockPrismaFolderFindFirst.mockResolvedValue(null)
+
+            await contentController.getFiles(mockRequest, mockResponse, mockNext)
+
+            expect(mockPrismaFolderFindFirst).toHaveBeenCalled()
+            expect(mockResponse.status).toHaveBeenCalledWith(404)
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'Folder not found.' })
+        })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.folderId = 'folder-456'
+            const mockError = new Error('Prisma find failed')
+            mockPrismaFolderFindFirst.mockRejectedValue(mockError)
+
+            await contentController.getFiles(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.render).not.toHaveBeenCalled()
+        })
     })
 
     describe('getFileDetails', () => {
@@ -254,7 +342,7 @@ describe('contentController', () => {
             const mockFile = { id: 'file-789', name: 'details.txt', updloadedAt: new Date() }
             mockPrismaFileFindFirst.mockResolvedValue(mockFile)
 
-            await contentController.getFileDetails(mockRequest, mockResponse)
+            await contentController.getFileDetails(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFileFindFirst).toHaveBeenCalledWith({
                 where: { id: 'file-789' }
@@ -264,19 +352,52 @@ describe('contentController', () => {
                 date: JSON.stringify(mockFile.updloadedAt)
             })
         })
+
+        test('should render error-page with 404 status if file is not found', async () => {
+            mockRequest.params.fileId = 'non-existent-file'
+            mockPrismaFileFindFirst.mockResolvedValue(null)
+
+            await contentController.getFileDetails(mockRequest, mockResponse, mockNext)
+
+            expect(mockPrismaFileFindFirst).toHaveBeenCalled()
+            expect(mockResponse.status).toHaveBeenCalledWith(404)
+            expect(mockResponse.render).toHaveBeenCalledWith('error-page', { message: 'File not found.' })
+        })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.fileId = 'file-789'
+            const mockError = new Error('Prisma find failed')
+            mockPrismaFileFindFirst.mockRejectedValue(mockError)
+
+            await contentController.getFileDetails(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.render).not.toHaveBeenCalled()
+        })
     })
 
     describe('deleteFile', () => {
-        test('should delete a file and redirect', async () => {
+        test('should delete a file and redirect on success', async () => {
             mockRequest.params.fileId = 'file-789'
             mockPrismaFileDelete.mockResolvedValue({})
 
-            await contentController.deleteFile(mockRequest, mockResponse)
+            await contentController.deleteFile(mockRequest, mockResponse, mockNext)
 
             expect(mockPrismaFileDelete).toHaveBeenCalledWith({
                 where: { id: 'file-789' }
             })
             expect(mockResponse.redirect).toHaveBeenCalledWith('/')
+        })
+
+        test('should call next with an error if prisma fails', async () => {
+            mockRequest.params.fileId = 'file-789'
+            const mockError = new Error('Prisma delete failed')
+            mockPrismaFileDelete.mockRejectedValue(mockError)
+
+            await contentController.deleteFile(mockRequest, mockResponse, mockNext)
+
+            expect(mockNext).toHaveBeenCalledWith(mockError)
+            expect(mockResponse.redirect).not.toHaveBeenCalled()
         })
     })
 })
