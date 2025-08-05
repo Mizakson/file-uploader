@@ -141,3 +141,9 @@ input[type="text"] {
 label[for="editFolder"] {
     font-size: 1.1em;
 }
+
+#login-form>fieldset {
+    gap: 1%;
+    display: grid;
+    grid-template-columns: 75px 200px;
+}
