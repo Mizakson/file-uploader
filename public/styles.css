@@ -100,7 +100,6 @@ button,
     text-decoration: none;
     cursor: pointer;
     background-color: purple;
-    box-shadow: purple;
     color: white;
     font-weight: 400;
     height: 26px;
@@ -122,4 +121,14 @@ form {
     display: grid;
     grid-template-rows: 1fr 1fr;
     align-items: center;
+}
+
+#view-title {
+    font-size: 1.2em;
+    font-weight: 300;
+}
+
+.options {
+    display: flex;
+    gap: 1%;
 }
