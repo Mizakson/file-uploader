@@ -128,7 +128,16 @@ form {
     font-weight: 300;
 }
 
-.options {
+.options,
+.btns {
     display: flex;
     gap: 1%;
+}
+
+input[type="text"] {
+    font-size: 14px;
+}
+
+label[for="editFolder"] {
+    font-size: 1.1em;
 }
