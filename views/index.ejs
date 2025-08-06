@@ -15,44 +15,47 @@
 </head>
 
 <body>
-    <div class="header">
-        <div class="about">
-            <div class="project-name">
-                <h1 class="lato-bold" title="Odin Project NodeJS Course Project #5 -- A program by Mizakson">Members
-                    Only</h1>
+    <div class="index-container">
+        <div class="header">
+            <div class="about">
+                <div class="project-name">
+                    <h1 class="lato-bold" title="Odin Project NodeJS Course Project #5 -- A program by Mizakson">Members
+                        Only</h1>
+                </div>
             </div>
+            <%- include('partials/navBar.ejs', { user: user }) %>
         </div>
-        <%- include('partials/navBar.ejs', { user: user }) %>
-    </div>
-    <div class="content">
-        <% if (user) { %>
-            <% if (folders.length===0) { %>
-                <strong>Create a folder to store and upload files!</strong>
-                <%} else if (folders.length> 0) { %>
-                    <% for (const obj of folders) { %>
-                        <div class="folder">
-                            <div class="title-text">
-                                <%= obj.name %>
+        <div class="content">
+            <% if (user) { %>
+                <% if (folders.length===0) { %>
+                    <strong>Create a folder to store and upload files!</strong>
+                    <%} else if (folders.length> 0) { %>
+                        <% for (const obj of folders) { %>
+                            <div class="folder">
+                                <div class="title-text">
+                                    <%= obj.name %>
+                                </div>
+                                <div class="folder-options">
+                                    <button><a href="/content/folder/<%= obj.id %>/upload-file">Upload
+                                        </a></button>
+                                    <button><a href="/content/folder/<%= obj.id %>/files">View</a></button>
+                                    <button><a href="/content/<%= obj.id %>/edit-folder">Edit</a></button>
+                                    <form action="/content/<%= obj.id%>/delete-folder" method="post">
+                                        <button type="submit">Delete</button>
+                                    </form>
+
+                                </div>
                             </div>
-                            <div class="folder-options">
-                                <button><a href="/content/folder/<%= obj.id %>/upload-file">Upload
-                                    </a></button>
-                                <button><a href="/content/folder/<%= obj.id %>/files">View</a></button>
-                                <button><a href="/content/<%= obj.id %>/edit-folder">Edit</a></button>
-                                <form action="/content/<%= obj.id%>/delete-folder" method="post">
-                                    <button type="submit">Delete</button>
-                                </form>
 
-                            </div>
-                        </div>
-
-                        <% } %>
-                            <%} %>
+                            <% } %>
+                                <%} %>
 
 
 
-                                <% } %>
+                                    <% } %>
+        </div>
     </div>
+
 
 
 

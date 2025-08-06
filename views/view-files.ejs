@@ -11,27 +11,30 @@
 </head>
 
 <body>
-    <h1>
-        <%= folder.name %>
-    </h1>
-    <% if (files.length> 0) { %>
-        <div class="files">
-            <% for (const obj of files) { %>
-                <div class="file">
-                    <div class="title-text" id="view-title">
-                        <%= obj.name %>
+    <div class="file-details-container">
+        <h1>
+            <%= folder.name %>
+        </h1>
+        <% if (files.length> 0) { %>
+            <div class="files">
+                <% for (const obj of files) { %>
+                    <div class="file">
+                        <div class="title-text" id="view-title">
+                            <%= obj.name %>
+                        </div>
+                        <div class="options">
+                            <button><a href="/download/<%= obj.id %>">Download</a></button>
+                            <button><a href="/content/files/<%= obj.id %>">Details</a></button>
+                            <form action="/content/files/<%= obj.id %>/delete-file" method="post">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="options">
-                        <button><a href="/download/<%= obj.id %>">Download</a></button>
-                        <button><a href="/content/files/<%= obj.id %>">Details</a></button>
-                        <form action="/content/files/<%= obj.id %>/delete-file" method="post">
-                            <button type="submit">Delete</button>
-                        </form>
-                    </div>
-                </div>
-                <%} %>
-        </div>
-        <% } %>
+                    <%} %>
+            </div>
+            <% } %>
+    </div>
+
 </body>
 
 </html>

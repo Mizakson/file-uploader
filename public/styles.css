@@ -3,7 +3,7 @@
     min-width: 300px;
 }
 
-body {
+.index-container {
     padding-top: .5%;
     padding-bottom: .5%;
     padding-left: 1.5%;
@@ -133,21 +133,74 @@ form {
 .btns {
     display: flex;
     gap: 1%;
+    justify-content: center;
 }
 
 input[type="text"] {
     font-size: 14px;
 }
 
-label[for="editFolder"] {
+label[for="editFolder"],
+label[for="newFile"] {
     font-size: 1.1em;
+    width: 150px;
+}
+
+label[for="newFile"] {
+    width: 215px;
+}
+
+.login-container,
+.sign-up-container {
+    padding-top: .5%;
+    padding-bottom: .5%;
+    padding-left: 1.5%;
+    padding-right: 1.5%;
+    text-align: center;
+}
+
+.form-container,
+.file-details-container {
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 #login-form>fieldset,
 #sign-up-form>fieldset {
     gap: 1%;
     display: grid;
-    grid-template-columns: 75px 200px;
+    grid-template-columns: 100px 250px;
+    padding-bottom: 7.5%;
+}
+
+.sign-up-container>h1 {
+    padding-bottom: 1.5%;
+}
+
+.file {
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    gap: 10%;
+}
+
+.files {
+    padding: 5%;
+}
+
+.options>form {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+
+#view-title.title-text {
+    width: 300px;
+}
+
+#file-upload-form>.btns {
+    padding: 2.5%;
 }
 
 @media (min-width: 600px) and (max-width: 1199px) {}

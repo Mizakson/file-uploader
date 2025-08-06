@@ -11,15 +11,18 @@
 </head>
 
 <body>
-    <h1>
-        <%= file.name %>
-    </h1>
-    <div class="details">
-        <p>Uploaded At: <%= date %>
-        </p>
-        <p>Size: <%= file.size %> B
-        </p>
+    <div class="file-details-container">
+        <h1>
+            <%= file.name %>
+        </h1>
+        <div class="details">
+            <p>Uploaded At: <%= date %>
+            </p>
+            <p>Size: <%= file.size %> B
+            </p>
+        </div>
     </div>
+
 </body>
 
 </html>

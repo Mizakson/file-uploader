@@ -4,31 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign up</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
-    <h1>Sign up</h1>
-    <div class="form-container">
-        <form action="/user/sign-up" method="post" id="sign-up-form">
-            <fieldset>
-                <label for="username">Username: </label>
-                <input type="text" name="username" id="username">
-            </fieldset>
-            <fieldset>
-                <label for="password">Password: </label>
-                <input type="password" name="password" id="password">
-            </fieldset>
-            <fieldset>
-                <label for="confirmPassword">Confirm Password: </label>
-                <input type="password" name="confirmPassword" id="confirmPassword">
-            </fieldset>
-            <div class="btns">
-                <button type="submit">Sign up</button>
-            </div>
-        </form>
+    <div class="sign-up-container">
+        <h1>Sign Up</h1>
+        <div class="form-container">
+            <form action="/user/sign-up" method="post" id="sign-up-form">
+                <fieldset>
+                    <label for="username">Username: </label>
+                    <input type="text" name="username" id="username">
+                </fieldset>
+                <fieldset>
+                    <label for="password">Password: </label>
+                    <input type="password" name="password" id="password">
+                </fieldset>
+                <fieldset>
+                    <label for="confirmPassword">Confirm Password: </label>
+                    <input type="password" name="confirmPassword" id="confirmPassword">
+                </fieldset>
+                <div class="btns">
+                    <button type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
     </div>
+
 </body>
 
 </html>
