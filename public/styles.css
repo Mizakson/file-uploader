@@ -1,5 +1,6 @@
 :root {
     font-family: "Lato", sans-serif, Verdana, Geneva, Tahoma;
+    min-width: 300px;
 }
 
 body {
@@ -148,3 +149,7 @@ label[for="editFolder"] {
     display: grid;
     grid-template-columns: 75px 200px;
 }
+
+@media (min-width: 600px) and (max-width: 1199px) {}
+
+@media (max-width: 599px) {}
