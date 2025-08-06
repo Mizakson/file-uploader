@@ -203,6 +203,10 @@ label[for="newFile"] {
     padding: 2.5%;
 }
 
+strong {
+    text-align: center;
+}
+
 @media (min-width: 600px) and (max-width: 1199px) {
     .content {
         grid-template-columns: 1fr 1fr;
