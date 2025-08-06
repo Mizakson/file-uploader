@@ -1,6 +1,6 @@
 :root {
     font-family: "Lato", sans-serif, Verdana, Geneva, Tahoma;
-    min-width: 300px;
+    min-width: 150px;
 }
 
 .index-container {
@@ -203,6 +203,14 @@ label[for="newFile"] {
     padding: 2.5%;
 }
 
-@media (min-width: 600px) and (max-width: 1199px) {}
+@media (min-width: 600px) and (max-width: 1199px) {
+    .content {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 
-@media (max-width: 599px) {}
+@media (max-width: 599px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
