@@ -58,7 +58,7 @@
   * __Supertest__: A library for testing HTTP requests and routes.
 
   ## Setup and Installation
-  To get a copy of this project up and running on your local machine for development and testing purposes, follow these steps.
+  To get a copy of this project up and running on your local machine for development and testing purposes, follow these steps:
 
   ### Prerequisites
   You will need the following installed:
@@ -86,6 +86,28 @@
   SESSION_SECRET="a_secret_key"
   ```
   (Note: None of the environment variables should be shared publicly)
+
+  ### Installation
+  1. Clone the repository
+  ``` bash
+  git clone https://github.com/your-username/file-uploader.git
+  cd file-uploader
+  ```
+
+  2. Install project dependencies
+  ``` bash
+  npm install
+  ```
+  
+  3. Run Prisma migrations to setup database schema
+  ``` bash
+  npx prisma migrate dev
+  ```
+
+  4. Start the development server
+  ``` bash
+  npm start
+  ```
 
   ## Testing
 
