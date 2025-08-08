@@ -111,6 +111,14 @@
   ```
 
   ## Testing
+  To run the test suite, run the following command(s)
+  ``` bash 
+  # full test suite
+  npm test
+
+  # inidivual test file
+  jest path/to/individual-testfile.test.js
+  ```
 
   ## What I Learned
 
