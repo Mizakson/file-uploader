@@ -15,7 +15,8 @@
 
   ## Project Overview
 
-  ## Live Demo
+  ## [Live Demo](file-uploader-aup0.onrender.com/)
+  (Note: The live demo may experience a brief "cold start" due to hosting on a free service tier.)
 
   ## Features
 
