@@ -110,6 +110,8 @@
   npm start
   ```
 
+  The application will be running at `http://localhost:3000`
+
   ## Testing
   To run the test suite, run the following command(s)
   ``` bash 
