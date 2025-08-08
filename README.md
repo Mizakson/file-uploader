@@ -134,6 +134,13 @@
   * __Cloud Services Integration__: Integrating a third-party cloud service (Supabase) for both database management and file storage, a common pattern in modern web development.
 
   ## Future Enhancements
+  * __Drag-and-Drop__: Implement a more user-friendly interface for file uploads using drag-and-drop functionality.
+
+* __Nested Folders__: Add the ability to create folders within other folders for better organization.
+  
+ * __UI/UX Improvement__: Enhance the visual design with a modern CSS framework like Tailwind CSS.
+
+  * __Folder Sharing__: Allow users to share a folder using a URL
 
   ## License
   This project is licensed under the MIT License. See the `LICENSE` file for details.
