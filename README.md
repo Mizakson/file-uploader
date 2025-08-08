@@ -65,7 +65,8 @@
   
   * [Node.js](https://nodejs.org/en)
   * [npm](https://www.npmjs.com/)
-  * An existing [Supabase](https://supabase.com/) project
+
+  You will also need an existing [Supabase](https://supabase.com/) project
   
   ### Environment Variables
   Create a .env file in the root directory of the project.
