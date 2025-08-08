@@ -121,6 +121,15 @@
   ```
 
   ## What I Learned
+  This project was a fantastic opportunity to deepen my understanding of several core concepts in full-stack development, including:
+  
+    * __Full-Stack Architecture__: Building and connecting a multi-layered application, from the frontend (EJS) to the backend (Express) and the database (PostgreSQL with Supabase).
+    
+    * __Stateful Authentication__: Implementing and managing a session-based authentication system using Passport.js, a critical skill for building secure web applications.
+    
+   * __ORM Usage__: Gaining hands-on experience with Prisma, which significantly simplified database interactions and migrations.
+    
+    * __Cloud Services Integration__: Integrating a third-party cloud service (Supabase) for both database management and file storage, a common pattern in modern web development.
 
   ## Future Enhancements
 
