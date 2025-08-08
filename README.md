@@ -35,7 +35,7 @@
 * __Cloud Storage__: Utilizes Supabase for reliable and scaleable file storage.
 
   ## Tech Stack
-# Backend
+### Backend
 *__Node.js__: Server-side runtime environment.
 
 *__Express__: Web application framework for building the API and routing.
