@@ -32,7 +32,7 @@
 
 * __File Details__: View metadata and details for each uploaded file.
 
-* __Cloud Storage__: Utilizes Supabase for reliable and scalable file storage.
+* __Cloud Storage__: Utilizes Supabase for reliable and scaleable file storage.
 
   ## Tech Stack
 
