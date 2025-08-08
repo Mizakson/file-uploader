@@ -36,26 +36,26 @@
 
 ## Tech Stack
   ### Backend
-  *__Node.js__: Server-side runtime environment.
+  * __Node.js__: Server-side runtime environment.
 
-  *__Express__: Web application framework for building the API and routing.
+  * __Express__: Web application framework for building the API and routing.
 
-  *__Passport.js__: Middleware for handling user authentication.
+  * __Passport.js__: Middleware for handling user authentication.
 
-  *__Prisma ORM__: A modern database toolkit for type-safe database access.
+  * __Prisma ORM__: A modern database toolkit for type-safe database access.
 
   ### Database & Storage
-  *__Supabase__: A self-service backend platform used for both PostgreSQL database and cloud file storage.
+  * __Supabase__: A self-service backend platform used for both PostgreSQL database and cloud file storage.
 
-  *__PostgreSQL__: The relational database used to store user and folder information.
+  * __PostgreSQL__: The relational database used to store user and folder information.
 
   ### Frontend
-  *__EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
+  * __EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
 
   ### Testing
-  *__Jest__: A JavaScript testing framework for unit and integration tests.
+  * __Jest__: A JavaScript testing framework for unit and integration tests.
 
-  *__Supertest__: A library for testing HTTP requests and routes.
+  * __Supertest__: A library for testing HTTP requests and routes.
 
   ## Setup and Installation
 
