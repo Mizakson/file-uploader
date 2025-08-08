@@ -13,49 +13,49 @@
 * [Future Enhancements](#future-enhancements)
 * [License](#license)
 
-  ## Project Overview
+## Project Overview
   A full-stack file management application built as part of The Odin Project's Node.js course. This project allows users to securely manage files and folders with a focus on session-based authentication and CRUD operations.
 
   ## [Live Demo](file-uploader-aup0.onrender.com/)
   ![alt text](./public/images/file-uploader-homepage.png "Home page image preview")
 
-(Note: The live demo may experience a brief "cold start" due to hosting on a free service tier.)
+  (Note: The live demo may experience a brief "cold start" due to hosting on a free service tier.)
 
-  ## Features
-* __User Authentication__: Secure, session-based authentication using Passport.js with a local strategy.
+## Features
+  * __User Authentication__: Secure, session-based authentication using Passport.js with a local strategy.
 
-* __Account Management__: Allows users to create new accounts and log in securely.
+  * __Account Management__: Allows users to create new accounts and log in securely.
 
-* __Folder Management__: Perform full Create, Read, Update, and Delete operations on folders.
+  * __Folder Management__: Perform full Create, Read, Update, and Delete operations on folders.
 
-* __File Operations__: Upload, download, and delete files.
+  * __File Operations__: Upload, download, and delete files.
 
-* __File Details__: View metadata and details for each uploaded file.
+  * __File Details__: View metadata and details for each uploaded file.
 
-* __Cloud Storage__: Utilizes Supabase for reliable and scaleable file storage.
+  * __Cloud Storage__: Utilizes Supabase for reliable and scaleable file storage.
 
-  ## Tech Stack
-### Backend
-*__Node.js__: Server-side runtime environment.
+## Tech Stack
+  ### Backend
+  *__Node.js__: Server-side runtime environment.
 
-*__Express__: Web application framework for building the API and routing.
+  *__Express__: Web application framework for building the API and routing.
 
-*__Passport.js__: Middleware for handling user authentication.
+  *__Passport.js__: Middleware for handling user authentication.
 
-*__Prisma ORM__: A modern database toolkit for type-safe database access.
+  *__Prisma ORM__: A modern database toolkit for type-safe database access.
 
-# Database & Storage
-*__Supabase__: A self-service backend platform used for both PostgreSQL database and cloud file storage.
+  ### Database & Storage
+  *__Supabase__: A self-service backend platform used for both PostgreSQL database and cloud file storage.
 
-*__PostgreSQL__: The relational database used to store user and folder information.
+  *__PostgreSQL__: The relational database used to store user and folder information.
 
-# Frontend
-*__EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
+  ### Frontend
+  *__EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
 
-# Testing
-*__Jest__: A JavaScript testing framework for unit and integration tests.
+  ### Testing
+  *__Jest__: A JavaScript testing framework for unit and integration tests.
 
-*__Supertest__: A library for testing HTTP requests and routes.
+  *__Supertest__: A library for testing HTTP requests and routes.
 
   ## Setup and Installation
 
