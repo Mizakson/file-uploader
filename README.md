@@ -58,6 +58,34 @@
   * __Supertest__: A library for testing HTTP requests and routes.
 
   ## Setup and Installation
+  To get a copy of this project up and running on your local machine for development and testing purposes, follow these steps.
+
+  ### Prerequisites
+  You will need the following installed:
+  
+  * [Node.js](https://nodejs.org/en)
+  * [npm](https://www.npmjs.com/)
+  * An existing [Supabase](https://supabase.com/) project
+  
+  ### Environment Variables
+  Create a .env file in the root directory of the project.
+
+  Copy the contents of the .env.example file into your new .env file.
+  
+  Fill in the values with your credentials from your Supabase project.
+
+  ``` bash
+  # Supabase Database URL & Prisma Schema
+  DATABASE_URL="postgresql://[USER]:[PASSWORD]@[HOST]:[PORT]/[DATABASE]"
+
+  # Supabase Storage & Service Key
+  SUPABASE_URL="https://your-project-id.supabase.co"
+  SUPABASE_SERVICE_KEY="your-supabase-service-role-key"
+  
+  # Passport Session Secret
+  SESSION_SECRET="a_secret_key"
+  ```
+  (Note: None of the environment variables should be shared publicly)
 
   ## Testing
 
