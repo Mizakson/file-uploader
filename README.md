@@ -17,8 +17,13 @@
 
   ## [Live Demo](file-uploader-aup0.onrender.com/)
   (Note: The live demo may experience a brief "cold start" due to hosting on a free service tier.)
+  Home page
   ![alt text](./public/images/file-uploader-homepage.png "Home page image preview")
-  ![alt text](./public/images/file-uploader-view-files-page.png "View files page image preview")
+
+  View files page
+  <p align="center">
+    <img src="./public/images/file-uploader-view-files-page.png" alt="View files page image preview"/>
+  </p>
 
   ## Features
 
