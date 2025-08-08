@@ -20,7 +20,19 @@
   ![alt text](./public/images/file-uploader-homepage.png "Home page image preview")
 
 (Note: The live demo may experience a brief "cold start" due to hosting on a free service tier.)
+
   ## Features
+* __User Authentication__: Secure, session-based authentication using Passport.js with a local strategy.
+
+* __Account Management__: Allows users to create new accounts and log in securely.
+
+* __Folder Management__: Perform full Create, Read, Update, and Delete operations on folders.
+
+* __File Operations__: Upload, download, and delete files.
+
+* __File Details__: View metadata and details for each uploaded file.
+
+* __Cloud Storage__: Utilizes Supabase for reliable and scalable file storage.
 
   ## Tech Stack
 
