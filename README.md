@@ -14,7 +14,7 @@
 * [License](#license)
 
 ## Project Overview
-  A full-stack file management application built as part of The Odin Project's Node.js course. This project allows users to securely manage files and folders with a focus on session-based authentication and CRUD operations.
+  A multi-page full-stack application built as part of The Odin Project's NodeJS course. It features session-based authentication, allowing users to securely manage their own files and folders. This app allows users to perform CRUD operations and utilizes a cloud-based storage solution for all user data.
 
   ## [Live Demo](file-uploader-aup0.onrender.com/)
   ![alt text](./public/images/file-uploader-homepage.png "Home page image preview")
