@@ -52,7 +52,7 @@
   ### Frontend
   * __EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
 
-  ### Testing
+  ### Tests
   * __Jest__: A JavaScript testing framework for unit and integration tests.
 
   * __Supertest__: A library for testing HTTP requests and routes.
