@@ -91,7 +91,7 @@
   ### Installation
   1. Clone the repository
   ``` bash
-  git clone https://github.com/your-username/file-uploader.git
+  git clone https://github.com/Mizakson/file-uploader.git
   cd file-uploader
   ```
 
