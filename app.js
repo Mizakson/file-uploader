@@ -58,7 +58,7 @@ app.use((err, req, res, next) => {
     const statusCode = err.status || 500
     const message = err.message || 'An unexpected error occurred.'
 
-    res.status(statusCode).render('errorpage', {
+    res.status(statusCode).render('error-page', {
         message: message,
     })
 })
