@@ -14,7 +14,7 @@
 * [License](#license)
 
 ## Project Overview
-  A multi-page full-stack application built as part of The Odin Project's NodeJS course. It features session-based authentication, allowing users to securely manage their own files and folders. This app allows users to perform CRUD operations and utilizes a cloud-based storage solution for all user data.
+  A multi-page full-stack application built as part of The Odin Project's NodeJS course. It features session-based authentication, allows users to perform CRUD operations and utilizes a cloud-based storage solution for all user data.
 
   ## [Live Demo](file-uploader-aup0.onrender.com/)
   ![alt text](./public/images/file-uploader-homepage.png "Home page image preview")
@@ -50,7 +50,7 @@
   * __PostgreSQL__: The relational database used to store user and folder information.
 
   ### Frontend
-  * __EJS__ (Embedded JavaScript): A simple templating language for generating dynamic HTML.
+  * __EJS__ (Embedded JavaScript): A templating language for generating dynamic HTML.
 
   ### Tests
   * __Jest__: A JavaScript testing framework for unit and integration tests.
@@ -127,11 +127,11 @@
   
   * __Full-Stack Architecture__: Building and connecting a multi-layered application, from the frontend (EJS) to the backend (Express) and the database (PostgreSQL with Supabase).
 
-  * __Stateful Authentication__: Implementing and managing a session-based authentication system using Passport.js, a critical skill for building secure web applications.
+  * __Stateful Authentication__: Implementing and managing a session-based authentication system using Passport.js.
 
   * __ORM Usage__: Gaining hands-on experience with Prisma, which significantly simplified database interactions and migrations.
 
-  * __Cloud Services Integration__: Integrating a third-party cloud service (Supabase) for both database management and file storage, a common pattern in modern web development.
+  * __Cloud Services Integration__: Integrating a third-party cloud service (Supabase) for both database management and file storage.
 
   ## Future Enhancements
   * __Drag-and-Drop__: Implement a more user-friendly interface for file uploads using drag-and-drop functionality.
